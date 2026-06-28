@@ -7,7 +7,7 @@ interface AdminReportModalProps {
   setSelectedPostId: (id: string | null) => void
   reportModalLoading: boolean
   selectedPostReports: any[] | null
-  setSelectedPostReports: (reports: any[] | null) => void
+  setSelectedPostReports: React.Dispatch<React.SetStateAction<any[] | null>>
   handleDismiss?: (id: string) => Promise<void>
   handleResolve?: (id: string) => Promise<void>
   handleBanUser?: (userId: string | undefined, reportId?: string) => void
@@ -48,7 +48,6 @@ export function AdminReportModal({
             <div className="relative border-l-2 border-slate-100 pl-6 ml-2 space-y-6">
               {selectedPostReports?.map((rep, idx) => (
                 <div key={rep.id} className="relative">
-                  {/* Node circle */}
                   <span className="absolute -left-[31px] top-1 flex h-4 w-4 items-center justify-center rounded-full bg-orange-500 ring-4 ring-white">
                     <span className="h-1.5 w-1.5 rounded-full bg-white"></span>
                   </span>
@@ -63,14 +62,13 @@ export function AdminReportModal({
                     <p className="text-xs font-bold text-slate-800 bg-slate-50 p-2.5 rounded-lg border border-slate-100/50">
                       {rep.reason}
                     </p>
-                    
-                    {/* Hành động xử lý cho báo cáo PENDING */}
+
                     {rep.status === 'PENDING' && handleDismiss && handleResolve && handleBanUser && (
                       <div className="flex flex-wrap gap-2 pt-2">
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="h-7 text-[10px] font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-md" 
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 text-[10px] font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-md"
                           onClick={async () => {
                             await handleDismiss(rep.id);
                             setSelectedPostReports(prev => prev ? prev.map(r => r.status === 'PENDING' ? { ...r, status: 'DISMISSED' } : r) : null);
@@ -78,10 +76,10 @@ export function AdminReportModal({
                         >
                           <CheckCircle className="h-3 w-3 mr-1" /> Bỏ qua
                         </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="h-7 text-[10px] font-bold text-orange-700 bg-orange-50 hover:bg-orange-100 rounded-md" 
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 text-[10px] font-bold text-orange-700 bg-orange-50 hover:bg-orange-100 rounded-md"
                           onClick={async () => {
                             await handleResolve(rep.id);
                             setSelectedPostReports(prev => prev ? prev.map(r => r.status === 'PENDING' ? { ...r, status: 'RESOLVED' } : r) : null);
@@ -89,21 +87,19 @@ export function AdminReportModal({
                         >
                           <EyeOff className="h-3 w-3 mr-1" /> Ẩn Bài
                         </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="h-7 text-[10px] font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-md" 
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 text-[10px] font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-md"
                           onClick={() => {
                             handleBanUser(rep.postAuthorId, rep.id);
-                            // Cập nhật state sau khi handleBanUser được confirm ở modal ngoài
                           }}
                         >
                           <Ban className="h-3 w-3 mr-1" /> Khóa User
                         </Button>
                       </div>
                     )}
-                    
-                    {/* Trạng thái đã xử lý */}
+
                     {rep.status !== 'PENDING' && (
                       <div className="pt-1">
                         <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-md ${rep.status === 'RESOLVED' ? 'bg-orange-100 text-orange-700' : 'bg-slate-200 text-slate-600'}`}>

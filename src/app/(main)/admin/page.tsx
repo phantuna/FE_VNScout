@@ -26,14 +26,11 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<"stats" | "posts" | "users" | "locations" | "bannedWords">("stats")
   const [stats, setStats] = useState<AdminStatsResponse | null>(null)
   const [reports, setReports] = useState<ReportResponse[]>([])
-
-  // Tab-specific data state
   const [allUsers, setAllUsers] = useState<any[]>([])
   const [allPosts, setAllPosts] = useState<any[]>([])
   const [allLocations, setAllLocations] = useState<any[]>([])
   const [bannedWords, setBannedWords] = useState<any[]>([])
 
-  // Pagination states
   const [usersPage, setUsersPage] = useState(0)
   const [usersTotalPages, setUsersTotalPages] = useState(1)
 
@@ -43,23 +40,19 @@ export default function AdminDashboard() {
   const [locationsPage, setLocationsPage] = useState(0)
   const [locationsTotalPages, setLocationsTotalPages] = useState(1)
 
-  // Loading states
   const [loading, setLoading] = useState(true)
   const [tabLoading, setTabLoading] = useState(false)
 
-  // Search states
   const [userQuery, setUserQuery] = useState("")
   const [showOnlyAdmins, setShowOnlyAdmins] = useState(false)
   const [postQuery, setPostQuery] = useState("")
   const [locationQuery, setLocationQuery] = useState("")
   const [wordQuery, setWordQuery] = useState("")
 
-  // Detailed post report timeline modal
   const [selectedPostReports, setSelectedPostReports] = useState<any[] | null>(null)
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null)
   const [reportModalLoading, setReportModalLoading] = useState(false)
 
-  // Custom Confirmation Dialog State
   const [confirmBanUser, setConfirmBanUser] = useState<{ userId: string; reportId?: string } | null>(null)
 
   const { toast } = useToast()
@@ -94,7 +87,6 @@ export default function AdminDashboard() {
     }
   }, [activeTab, usersPage, postsPage, locationsPage])
 
-  // Debounced Search for Banned Words
   useEffect(() => {
     if (activeTab === "bannedWords") {
       const handler = setTimeout(() => {
@@ -148,7 +140,7 @@ export default function AdminDashboard() {
 
   const fetchBannedWords = async (query: string = "") => {
     if (!query.trim()) {
-      setBannedWords([]) // Không fetch toàn bộ khi chưa tìm kiếm
+      setBannedWords([])
       return
     }
     try {
@@ -272,14 +264,13 @@ export default function AdminDashboard() {
       formData.append("word", word)
       formData.append("type", type)
       formData.append("language", language)
-      
+
       await apiFetch(`/api/v1/admin/banned-words`, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: formData.toString()
       })
       toast({ title: "Thành công", description: "Đã thêm từ cấm mới." })
-      // Refresh current search if matching, or just clear query to hide list
       if (wordQuery && word.toLowerCase().includes(wordQuery.toLowerCase())) {
         fetchBannedWords(wordQuery)
       }
@@ -298,10 +289,10 @@ export default function AdminDashboard() {
     }
   }
 
-  // Filtered lists
+
   const filteredUsers = allUsers.filter(u => {
     const matchesSearch = u.username.toLowerCase().includes(userQuery.toLowerCase()) ||
-                          u.email.toLowerCase().includes(userQuery.toLowerCase());
+      u.email.toLowerCase().includes(userQuery.toLowerCase());
     if (showOnlyAdmins && !u.roles?.includes("ADMIN")) return false;
     return matchesSearch;
   })
@@ -327,149 +318,139 @@ export default function AdminDashboard() {
 
   return (
     <>
-    <div className="min-h-screen bg-slate-50/50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 pb-24">
-        {/* Page Title Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div className="space-y-1.5">
-            <h1 className="text-3xl font-black tracking-tight flex items-center gap-3 text-slate-900">
-              <div className="p-2.5 bg-gradient-to-br from-orange-400 to-orange-600 rounded-xl text-white shadow-lg shadow-orange-500/20">
-                <ShieldAlert className="h-6 w-6" />
-              </div>
-              Trung tâm Quản trị
-            </h1>
-            <p className="text-slate-500 text-sm font-medium pl-14">
-              Hệ thống phân tích, thống kê & kiểm duyệt chuyên sâu dành cho Ban Quản Trị.
-            </p>
+      <div className="min-h-screen bg-slate-50/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 pb-24">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div className="space-y-1.5">
+              <h1 className="text-3xl font-black tracking-tight flex items-center gap-3 text-slate-900">
+                <div className="p-2.5 bg-gradient-to-br from-orange-400 to-orange-600 rounded-xl text-white shadow-lg shadow-orange-500/20">
+                  <ShieldAlert className="h-6 w-6" />
+                </div>
+                Trung tâm Quản trị
+              </h1>
+              <p className="text-slate-500 text-sm font-medium pl-14">
+                Hệ thống phân tích, thống kê & kiểm duyệt chuyên sâu dành cho Ban Quản Trị.
+              </p>
+            </div>
           </div>
+
+          <div className="flex p-1.5 bg-slate-200/50 backdrop-blur-md rounded-2xl w-full border border-slate-200/50 overflow-x-auto">
+            {[
+              { id: "stats", label: "Tổng quan", icon: Server },
+              { id: "posts", label: "Kiểm duyệt", icon: ShieldCheck },
+              { id: "users", label: "Thành viên", icon: Users },
+              { id: "locations", label: "Địa điểm", icon: MapPin },
+              { id: "bannedWords", label: "Từ cấm", icon: Ban },
+            ].map(tab => {
+              const Icon = tab.icon
+              const isActive = activeTab === tab.id
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    setActiveTab(tab.id as any)
+                    setUsersPage(0)
+                    setPostsPage(0)
+                    setLocationsPage(0)
+                  }}
+                  className={`relative flex-1 flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-bold rounded-xl transition-all duration-300 ${isActive
+                      ? "bg-white text-orange-600 shadow-sm"
+                      : "text-slate-500 hover:text-slate-800 hover:bg-white/50"
+                    }`}
+                >
+                  <Icon className="h-4 w-4 shrink-0" />
+                  <span className="whitespace-nowrap">{tab.label}</span>
+                </button>
+              )
+            })}
+          </div>
+
+          {activeTab === "stats" && (
+            <AdminTabStats
+              stats={stats}
+            />
+          )}
+
+          {activeTab === "posts" && (
+            <AdminTabPosts
+              tabLoading={tabLoading}
+              filteredPosts={filteredPosts}
+              postQuery={postQuery}
+              setPostQuery={setPostQuery}
+              postsPage={postsPage}
+              setPostsPage={setPostsPage}
+              postsTotalPages={postsTotalPages}
+              viewPostReports={viewPostReports}
+              togglePostDeletion={togglePostDeletion}
+              reports={reports}
+              pendingReportsCount={stats?.pendingReports || 0}
+              fetchAdminData={fetchAdminData}
+              handleDismiss={handleDismiss}
+              handleResolve={handleResolve}
+              handleBanUser={handleBanUser}
+            />
+          )}
+
+          {activeTab === "users" && (
+            <AdminTabUsers
+              tabLoading={tabLoading}
+              filteredUsers={filteredUsers}
+              allUsers={allUsers}
+              userQuery={userQuery}
+              setUserQuery={setUserQuery}
+              showOnlyAdmins={showOnlyAdmins}
+              setShowOnlyAdmins={setShowOnlyAdmins}
+              usersPage={usersPage}
+              setUsersPage={setUsersPage}
+              usersTotalPages={usersTotalPages}
+              handleUnbanUser={handleUnbanUser}
+              handleBanUser={handleBanUser}
+              handleUpdateRole={handleUpdateRole}
+            />
+          )}
+
+          {activeTab === "locations" && (
+            <AdminTabLocations
+              tabLoading={tabLoading}
+              filteredLocations={filteredLocations}
+              locationQuery={locationQuery}
+              setLocationQuery={setLocationQuery}
+              locationsPage={locationsPage}
+              setLocationsPage={setLocationsPage}
+              locationsTotalPages={locationsTotalPages}
+              toggleLocationDeletion={toggleLocationDeletion}
+            />
+          )}
+
+          {activeTab === "bannedWords" && (
+            <AdminTabBannedWords
+              tabLoading={tabLoading}
+              bannedWords={bannedWords}
+              wordQuery={wordQuery}
+              setWordQuery={setWordQuery}
+              handleAddWord={handleAddWord}
+              handleDeleteWord={handleDeleteWord}
+            />
+          )}
+
+          <AdminReportModal
+            selectedPostId={selectedPostId}
+            setSelectedPostId={setSelectedPostId}
+            reportModalLoading={reportModalLoading}
+            selectedPostReports={selectedPostReports}
+            setSelectedPostReports={setSelectedPostReports}
+            handleDismiss={handleDismiss}
+            handleResolve={handleResolve}
+            handleBanUser={handleBanUser}
+          />
+
+          <AdminBanModal
+            confirmBanUser={confirmBanUser}
+            setConfirmBanUser={setConfirmBanUser}
+            confirmBanExecution={confirmBanExecution}
+          />
         </div>
-
-        {/* Modern Segmented Tabs */}
-        <div className="flex p-1.5 bg-slate-200/50 backdrop-blur-md rounded-2xl w-full border border-slate-200/50 overflow-x-auto">
-          {[
-            { id: "stats", label: "Tổng quan", icon: Server },
-            { id: "posts", label: "Kiểm duyệt", icon: ShieldCheck },
-            { id: "users", label: "Thành viên", icon: Users },
-            { id: "locations", label: "Địa điểm", icon: MapPin },
-            { id: "bannedWords", label: "Từ cấm", icon: Ban },
-          ].map(tab => {
-            const Icon = tab.icon
-            const isActive = activeTab === tab.id
-            return (
-              <button
-                key={tab.id}
-                onClick={() => {
-                  setActiveTab(tab.id as any)
-                  setUsersPage(0)
-                  setPostsPage(0)
-                  setLocationsPage(0)
-                }}
-                className={`relative flex-1 flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-bold rounded-xl transition-all duration-300 ${
-                  isActive 
-                    ? "bg-white text-orange-600 shadow-sm" 
-                    : "text-slate-500 hover:text-slate-800 hover:bg-white/50"
-                }`}
-              >
-                <Icon className="h-4 w-4 shrink-0" />
-                <span className="whitespace-nowrap">{tab.label}</span>
-              </button>
-            )
-          })}
-        </div>
-
-      {/* TABS CONTAINER */}
-      {activeTab === "stats" && (
-        <AdminTabStats
-          stats={stats}
-        />
-      )}
-
-      {/* TAB 2: POSTS & REPORTS MANAGEMENT */}
-      {activeTab === "posts" && (
-        <AdminTabPosts
-          tabLoading={tabLoading}
-          filteredPosts={filteredPosts}
-          postQuery={postQuery}
-          setPostQuery={setPostQuery}
-          postsPage={postsPage}
-          setPostsPage={setPostsPage}
-          postsTotalPages={postsTotalPages}
-          viewPostReports={viewPostReports}
-          togglePostDeletion={togglePostDeletion}
-          reports={reports}
-          pendingReportsCount={stats?.pendingReports || 0}
-          fetchAdminData={fetchAdminData}
-          handleDismiss={handleDismiss}
-          handleResolve={handleResolve}
-          handleBanUser={handleBanUser}
-        />
-      )}
-
-      {/* TAB 3: USERS MANAGEMENT */}
-      {activeTab === "users" && (
-        <AdminTabUsers
-          tabLoading={tabLoading}
-          filteredUsers={filteredUsers}
-          allUsers={allUsers}
-          userQuery={userQuery}
-          setUserQuery={setUserQuery}
-          showOnlyAdmins={showOnlyAdmins}
-          setShowOnlyAdmins={setShowOnlyAdmins}
-          usersPage={usersPage}
-          setUsersPage={setUsersPage}
-          usersTotalPages={usersTotalPages}
-          handleUnbanUser={handleUnbanUser}
-          handleBanUser={handleBanUser}
-          handleUpdateRole={handleUpdateRole}
-        />
-      )}
-
-      {/* TAB 4: LOCATIONS MANAGEMENT */}
-      {activeTab === "locations" && (
-        <AdminTabLocations
-          tabLoading={tabLoading}
-          filteredLocations={filteredLocations}
-          locationQuery={locationQuery}
-          setLocationQuery={setLocationQuery}
-          locationsPage={locationsPage}
-          setLocationsPage={setLocationsPage}
-          locationsTotalPages={locationsTotalPages}
-          toggleLocationDeletion={toggleLocationDeletion}
-        />
-      )}
-
-      {/* TAB 5: BANNED WORDS MANAGEMENT */}
-      {activeTab === "bannedWords" && (
-        <AdminTabBannedWords
-          tabLoading={tabLoading}
-          bannedWords={bannedWords}
-          wordQuery={wordQuery}
-          setWordQuery={setWordQuery}
-          handleAddWord={handleAddWord}
-          handleDeleteWord={handleDeleteWord}
-        />
-      )}
-
-      {/* REPORT TIMELINE MODAL DIALOG */}
-      <AdminReportModal
-        selectedPostId={selectedPostId}
-        setSelectedPostId={setSelectedPostId}
-        reportModalLoading={reportModalLoading}
-        selectedPostReports={selectedPostReports}
-        setSelectedPostReports={setSelectedPostReports}
-        handleDismiss={handleDismiss}
-        handleResolve={handleResolve}
-        handleBanUser={handleBanUser}
-      />
-
-      {/* CUSTOM BAN CONFIRMATION DIALOG */}
-      <AdminBanModal
-        confirmBanUser={confirmBanUser}
-        setConfirmBanUser={setConfirmBanUser}
-        confirmBanExecution={confirmBanExecution}
-      />
-    </div>
-    </div>
+      </div>
     </>
   )
 }
