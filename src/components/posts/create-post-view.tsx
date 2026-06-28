@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { MapPin, Loader2, Lightbulb } from "lucide-react"
+import { MapPin, Loader2, Lightbulb, Camera, Building2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
@@ -164,11 +164,11 @@ export function CreatePostView() {
                 }
               }}>
                 <TabsList className="grid w-full grid-cols-2 h-11 bg-muted/50 p-1">
-                  <TabsTrigger value="SPOT" className="font-bold text-xs data-[state=active]:bg-card data-[state=active]:shadow-sm rounded-md">
-                    📸 Điểm Chụp
+                  <TabsTrigger value="SPOT" className="font-bold text-xs data-[state=active]:bg-card data-[state=active]:shadow-sm rounded-md flex items-center justify-center gap-1.5">
+                    <Camera className="h-3.5 w-3.5" /> Điểm Chụp
                   </TabsTrigger>
-                  <TabsTrigger value="SERVICE" className="font-bold text-xs data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-600 data-[state=active]:shadow-sm rounded-md">
-                    🏨 Dịch Vụ
+                  <TabsTrigger value="SERVICE" className="font-bold text-xs data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-600 data-[state=active]:shadow-sm rounded-md flex items-center justify-center gap-1.5">
+                    <Building2 className="h-3.5 w-3.5" /> Dịch Vụ
                   </TabsTrigger>
                 </TabsList>
               </Tabs>

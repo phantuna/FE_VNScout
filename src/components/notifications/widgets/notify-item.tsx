@@ -19,9 +19,9 @@ import { formatRelativeTime } from "@/utils/date"
 export const NOTIFICATION_ICONS: Record<string, { icon: typeof Heart; className: string }> = {
   like: { icon: Heart, className: "text-red-500" },
   comment: { icon: MessageCircle, className: "text-primary" },
-  follow: { icon: UserPlus, className: "text-accent" },
+  follow: { icon: UserPlus, className: "text-emerald-500" },
   new_post: { icon: MessageCircle, className: "text-orange-500" },
-  checkin: { icon: MapPin, className: "text-accent" },
+  checkin: { icon: MapPin, className: "text-emerald-500" },
   mention: { icon: AtSign, className: "text-primary" },
 }
 

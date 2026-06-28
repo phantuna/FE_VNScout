@@ -61,8 +61,10 @@ export function PostComments({ postId, comments, setComments, showLoginToast }: 
       }
       setCommentText("")
       setReplyingTo(null)
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to submit comment:", err)
+      const errorMsg = err.data?.message || err.message || "Không thể gửi bình luận, vui lòng thử lại sau."
+      showErrorToast("Lỗi gửi bình luận", errorMsg)
     }
   }
 

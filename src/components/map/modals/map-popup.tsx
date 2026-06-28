@@ -5,7 +5,7 @@ import Image from "next/image"
 import Link from "next/link"
 import {
   MapPin, Camera, Navigation, Sun, Share2, TrendingUp, Info,
-  Heart, ChevronRight, ChevronLeft, X, Loader2, Sunrise, Sunset, Hotel
+  Heart, ChevronRight, ChevronLeft, X, Loader2, Sunrise, Sunset, Hotel, Building2
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { type Location, type Post } from "@/types"
@@ -60,7 +60,15 @@ export function MapLocationPopup({
                 ? "bg-amber-500 text-white"
                 : "bg-primary text-primary-foreground"
             }`}>
-              {location.locationType === "SERVICE" ? "🏨 Dịch vụ" : "📸 " + (location.category || "Địa danh")}
+              {location.locationType === "SERVICE" ? (
+                <span className="flex items-center gap-1">
+                  <Building2 className="h-3 w-3" /> Dịch vụ
+                </span>
+              ) : (
+                <span className="flex items-center gap-1">
+                  <Camera className="h-3 w-3" /> {location.category || "Địa danh"}
+                </span>
+              )}
             </Badge>
             {(!location.locationType || location.locationType === "SPOT") && solarTimes && (
               <Badge className="bg-orange-500/10 text-orange-600 border border-orange-500/30 text-[9px] font-bold px-2 py-0.5 flex items-center gap-1">

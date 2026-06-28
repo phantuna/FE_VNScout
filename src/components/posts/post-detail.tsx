@@ -64,12 +64,13 @@ export function PostDetailView({
     showLoginRequiredToast(router)
   }
 
+  // 1. Fetch Post Detail
   useEffect(() => {
     async function fetchPostData() {
       if (!postId || initialPost) return
       try {
         setLoading(true)
-        const url = user ? `/api/v1/posts/${postId}?viewerId=${user.id}` : `/api/v1/posts/${postId}`
+        const url = user?.id ? `/api/v1/posts/${postId}?viewerId=${user.id}` : `/api/v1/posts/${postId}`
         const postData = await apiFetch(url)
         setPost(postData)
         setLiked(postData.liked)
@@ -77,12 +78,6 @@ export function PostDetailView({
         setLikesCount(postData.likeCount)
         setEditCaption(postData.caption || "")
         setEditTip(postData.shootingTip || "")
-        try {
-          const commentsData = await apiFetch(`/api/v1/comments/post/${postId}`)
-          setComments(commentsData.content || [])
-        } catch (err) {
-          console.error("Failed to fetch comments", err)
-        }
       } catch (error) {
         console.error("Failed to fetch post:", error)
       } finally {
@@ -90,17 +85,26 @@ export function PostDetailView({
       }
     }
     fetchPostData()
+  }, [postId, initialPost, user?.id])
 
-    const interval = setInterval(async () => {
-      if (postId) {
-        try {
-          const commentsData = await apiFetch(`/api/v1/comments/post/${postId}`)
-          setComments(commentsData.content || [])
-        } catch (err) { /* ignore */ }
+  // 2. Fetch and Poll Comments (Mỗi 10 giây)
+  useEffect(() => {
+    if (!postId) return
+
+    async function fetchComments() {
+      try {
+        const commentsData = await apiFetch(`/api/v1/comments/post/${postId}`)
+        setComments(commentsData.content || [])
+      } catch (err) {
+        console.error("Failed to fetch comments", err)
       }
-    }, 10000)
+    }
+    
+    fetchComments()
+
+    const interval = setInterval(fetchComments, 10000)
     return () => clearInterval(interval)
-  }, [postId, initialPost, user])
+  }, [postId])
 
   const toggleLike = async () => {
     if (!user) { showLoginToast(); return }

@@ -163,7 +163,7 @@ export function ProfileHeader({
             <span className="text-xs font-medium text-foreground">{userPosts.length} ảnh</span>
           </div>
           <div className="flex items-center gap-2 rounded-full bg-muted px-4 py-2">
-            <MapPin className="h-4 w-4 text-accent" />
+            <MapPin className="h-4 w-4 text-emerald-500" />
             <span className="text-xs font-medium text-foreground">
               {new Set(userPosts.map((p) => p.location?.province || p.location?.name)).size} tỉnh thành
             </span>

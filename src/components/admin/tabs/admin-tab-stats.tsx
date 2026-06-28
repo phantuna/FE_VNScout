@@ -13,6 +13,8 @@ interface AdminTabStatsProps {
 export function AdminTabStats({
   stats
 }: AdminTabStatsProps) {
+  const hasReports = (stats?.pendingReports || 0) > 0;
+
   return (
     <div className="space-y-8 animate-in fade-in-50 duration-200">
       {/* STATS METRIC CARDS */}
@@ -52,19 +54,40 @@ export function AdminTabStats({
         </div>
 
         {/* Card 3 */}
-        <div className="relative overflow-hidden p-6 bg-gradient-to-br from-orange-500 to-red-600 text-white rounded-3xl shadow-xl shadow-red-500/30 group">
+        <div className={`relative overflow-hidden p-6 rounded-3xl group transition-all duration-300 ${
+          hasReports 
+            ? "bg-gradient-to-br from-orange-500 to-red-600 text-white shadow-xl shadow-red-500/30" 
+            : "bg-white border border-slate-100 shadow-xl shadow-slate-200/20"
+        }`}>
           <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none transition-transform group-hover:scale-110 group-hover:rotate-12 duration-500">
-            <AlertTriangle className="h-24 w-24" />
+            <AlertTriangle className={`h-24 w-24 ${hasReports ? "text-white opacity-10" : "text-slate-100"}`} />
           </div>
           <div className="flex justify-between items-start mb-4">
-            <div className="p-3.5 bg-white/20 text-white backdrop-blur-md rounded-2xl shadow-inner">
+            <div className={`p-3.5 rounded-2xl shadow-inner ${
+              hasReports 
+                ? "bg-white/20 text-white backdrop-blur-md" 
+                : "bg-emerald-50 text-emerald-600"
+            }`}>
               <AlertTriangle className="h-6 w-6" />
             </div>
-            <Badge variant="secondary" className="bg-white/20 text-white border-white/20 hover:bg-white/30 backdrop-blur-md">Cần chú ý</Badge>
+            <Badge 
+              variant="secondary" 
+              className={`font-bold ${
+                hasReports 
+                  ? "bg-white/20 text-white border-white/20 hover:bg-white/30" 
+                  : "bg-emerald-50 text-emerald-600 border-emerald-100"
+              }`}
+            >
+              {hasReports ? "Cần chú ý" : "An toàn"}
+            </Badge>
           </div>
           <div className="relative z-10">
-            <h2 className="text-4xl font-black text-white tracking-tight">{stats?.pendingReports || 0}</h2>
-            <p className="text-sm font-bold text-red-100 mt-1">Báo cáo vi phạm chờ xử lý</p>
+            <h2 className={`text-4xl font-black tracking-tight ${hasReports ? "text-white" : "text-slate-800"}`}>
+              {stats?.pendingReports || 0}
+            </h2>
+            <p className={`text-sm font-bold mt-1 ${hasReports ? "text-red-100" : "text-slate-500"}`}>
+              Báo cáo vi phạm chờ xử lý
+            </p>
           </div>
         </div>
       </div>

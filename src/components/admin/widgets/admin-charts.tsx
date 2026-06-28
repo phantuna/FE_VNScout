@@ -73,17 +73,17 @@ export function AdminCharts({ totalPosts, totalUsers, postsPerDay, usersPerDay }
             <Tooltip content={<CustomTooltip suffix=" bài" />} />
             <defs>
               <linearGradient id="postGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#f97316" stopOpacity={0.2} />
-                <stop offset="95%" stopColor="#f97316" stopOpacity={0} />
+                <stop offset="5%" stopColor="#F47A47" stopOpacity={0.2} />
+                <stop offset="95%" stopColor="#F47A47" stopOpacity={0} />
               </linearGradient>
             </defs>
             <Line
               type="monotone"
               dataKey="posts"
-              stroke="#f97316"
+              stroke="#F47A47"
               strokeWidth={2.5}
-              dot={{ fill: "#f97316", strokeWidth: 0, r: 4 }}
-              activeDot={{ r: 6, fill: "#f97316", strokeWidth: 2, stroke: "#fff" }}
+              dot={{ fill: "#F47A47", strokeWidth: 0, r: 4 }}
+              activeDot={{ r: 6, fill: "#F47A47", strokeWidth: 2, stroke: "#fff" }}
             />
           </LineChart>
         </ResponsiveContainer>
@@ -94,12 +94,12 @@ export function AdminCharts({ totalPosts, totalUsers, postsPerDay, usersPerDay }
         <div className="flex items-center justify-between mb-6">
           <div>
             <h3 className="text-sm font-black text-slate-800 flex items-center gap-2">
-              <Users className="h-4 w-4 text-blue-500" />
+              <Users className="h-4 w-4 text-emerald-600" />
               User active 7 ngày
             </h3>
             <p className="text-[10px] text-slate-400 font-bold mt-0.5">Lượt đăng nhập mỗi ngày</p>
           </div>
-          <div className="px-2.5 py-1 bg-blue-50 rounded-full border border-blue-100 text-[10px] font-black text-blue-600">
+          <div className="px-2.5 py-1 bg-emerald-50 rounded-full border border-emerald-100 text-[10px] font-black text-emerald-700">
             {totalUsers} tổng
           </div>
         </div>
@@ -109,13 +109,13 @@ export function AdminCharts({ totalPosts, totalUsers, postsPerDay, usersPerDay }
             <XAxis dataKey="day" tick={{ fontSize: 10, fontWeight: 700, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
             <YAxis tick={{ fontSize: 10, fontWeight: 700, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
             <Tooltip content={<CustomTooltip suffix=" người" />} />
-            <Bar dataKey="users" fill="#3b82f6" radius={[6, 6, 0, 0]}>
+            <Bar dataKey="users" fill="#3B7A57" radius={[6, 6, 0, 0]}>
               {usersData.map((_, i) => (
                 <Cell
                   key={i}
                   fill={i === usersData.length - 1 || i === usersData.length - 2
-                    ? "#f97316"  // weekend highlight
-                    : "#3b82f6"
+                    ? "#F7C844"  // weekend highlight (sand yellow)
+                    : "#3B7A57"  // normal days (forest green)
                   }
                 />
               ))}
