@@ -27,7 +27,7 @@ const SERVICE_CATEGORIES = [
   "Khu vui chơi / Giải trí", "Spa / Wellness", "Khác",
 ]
 
-interface SearchResult { display: string; name: string; lat: number; lng: number; ref_id?: string }
+interface SearchResult { display: string; name: string; lat: number; lng: number; ref_id?: string; address?: string }
 interface CreateLocationDialogProps { 
   onCreated?: () => void; 
   trigger?: React.ReactNode;
@@ -203,7 +203,8 @@ export function CreateLocationDialog({ onCreated, trigger, open: controlledOpen,
           display: item.display_name || item.name || item.display,
           name: item.name || item.display_name?.split(",")[0],
           lat: item.lat ?? 0, lng: item.lon ?? item.lng ?? 0,
-          ref_id: item.ref_id
+          ref_id: item.ref_id,
+          address: item.address || item.display_name
         })))
       } catch (_) { setSearchResults([]) }
       finally { setIsSearching(false) }
@@ -284,7 +285,13 @@ export function CreateLocationDialog({ onCreated, trigger, open: controlledOpen,
                   <div className="mt-1.5 rounded-lg border border-border bg-card/95 backdrop-blur-md shadow-xl overflow-hidden">
                     {isSearching ? <div className="px-4 py-3 text-sm">Đang tìm...</div> : searchResults.map((r, i) => (
                       <button key={i} type="button" onClick={() => handleSelectResult(r)} className="w-full flex items-start gap-3 px-4 py-2.5 text-left text-sm hover:bg-muted/80 border-b last:border-0">
-                        <MapPin className="h-4 w-4 mt-0.5 text-primary" /><span className="line-clamp-2">{r.display}</span>
+                        <MapPin className="h-4 w-4 mt-0.5 text-primary shrink-0" />
+                        <div className="flex flex-col overflow-hidden">
+                          <span className="font-medium text-foreground truncate">{r.name || r.display}</span>
+                          {r.address && r.address !== (r.name || r.display) && (
+                            <span className="text-[11px] text-muted-foreground line-clamp-1 mt-0.5 leading-tight">{r.address}</span>
+                          )}
+                        </div>
                       </button>
                     ))}
                   </div>

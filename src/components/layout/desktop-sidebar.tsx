@@ -1,4 +1,4 @@
- "use client"
+"use client"
 
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
@@ -27,13 +27,13 @@ import { Button } from "@/components/ui/button"
 import { CreateLocationDialog } from "@/components/location/modals/create-location-dialog"
 
 const NAV_ITEMS = [
-  { href: "/", icon: Home, label: "Feed" },
-  { href: "/explore", icon: Search, label: "Explore" },
-  { href: "/map", icon: Map, label: "Map" },
-  { href: "/create", icon: PlusSquare, label: "Create" },
-  { href: "/notifications", icon: Bell, label: "Notifications" },
-  { href: "/messages", icon: MessageCircle, label: "Messages" },
-  { href: "/profile", icon: User, label: "Profile" },
+  { href: "/", icon: Home, label: "Trang chủ" },
+  { href: "/explore", icon: Search, label: "Khám phá" },
+  { href: "/map", icon: Map, label: "Bản đồ" },
+  { href: "/create", icon: PlusSquare, label: "Đăng bài" },
+  { href: "/notifications", icon: Bell, label: "Thông báo" },
+  { href: "/messages", icon: MessageCircle, label: "Tin nhắn" },
+  { href: "/profile", icon: User, label: "Hồ sơ" },
 ]
 
 import { useEffect, useState } from "react"
@@ -63,13 +63,11 @@ export function DesktopSidebar({ isCollapsed: controlledIsCollapsed = false, onT
 
   useEffect(() => {
     if (!user) return;
-    
-    // Fetch initial count
+
     apiFetch('/api/v1/notifications/unread-count')
       .then(count => setUnreadCount(count))
       .catch(() => { /* backend unavailable */ });
 
-    // SSE connection for real-time updates
     const token = localStorage.getItem("token");
     if (!token) return;
 
@@ -91,7 +89,6 @@ export function DesktopSidebar({ isCollapsed: controlledIsCollapsed = false, onT
             return data.unreadCount;
           });
         }
-        // Broadcast to other components (e.g. notifications-view)
         window.dispatchEvent(new CustomEvent('newNotification', { detail: data }));
       } catch (err) {
         console.error("Error parsing SSE data", err);
@@ -99,16 +96,14 @@ export function DesktopSidebar({ isCollapsed: controlledIsCollapsed = false, onT
     });
 
     eventSource.onerror = () => {
-      // Browser EventSource automatically attempts to reconnect. Suppress verbose errors during server restarts.
       console.warn("Mất kết nối SSE (Thời gian thực). Đang tự động kết nối lại...");
     };
 
-    // Fallback polling (less frequent when SSE is available)
     const interval = setInterval(() => {
       apiFetch('/api/v1/notifications/unread-count')
         .then(count => setUnreadCount(count))
         .catch(() => { /* backend unavailable */ });
-    }, 300000); // 5 phút gọi 1 lần, SSE xử lý real-time
+    }, 300000);
 
     const handleNotificationRead = (e: Event) => {
       const customEvent = e as CustomEvent;
@@ -120,12 +115,11 @@ export function DesktopSidebar({ isCollapsed: controlledIsCollapsed = false, onT
     };
     window.addEventListener('notificationRead', handleNotificationRead);
 
-    // Fetch initial chat unread count
     import("@/services/chat.service").then(({ chatService }) => {
       chatService.getMyConversations().then(convs => {
         const total = convs.reduce((sum, c) => sum + c.unreadCount, 0)
         setUnreadChatCount(total)
-      }).catch(() => {})
+      }).catch(() => { })
     })
 
     const handleChatUpdate = (e: Event) => {
@@ -142,10 +136,10 @@ export function DesktopSidebar({ isCollapsed: controlledIsCollapsed = false, onT
     };
   }, [user]);
 
-  const displayUser = user || { username: "Khách", avatarUrl: "" } // Simple fallback
+  const displayUser = user || { username: "Khách", avatarUrl: "" }
 
   return (
-    <aside 
+    <aside
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className={cn(
@@ -153,7 +147,6 @@ export function DesktopSidebar({ isCollapsed: controlledIsCollapsed = false, onT
         isCollapsed ? "w-[80px]" : "w-[240px] xl:w-[280px]"
       )}
     >
-      {/* Header / Logo */}
       <div className="flex items-center justify-between px-4 py-6">
         <Link href="/" className={cn("group/logo flex items-center gap-3 transition-all", isCollapsed && "justify-center w-full")}>
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary shadow-md shadow-primary/20 transition-transform group-hover/logo:scale-105 group-hover/logo:rotate-3 duration-300">
@@ -172,7 +165,6 @@ export function DesktopSidebar({ isCollapsed: controlledIsCollapsed = false, onT
         </Link>
       </div>
 
-      {/* Navigation */}
       <nav className="flex-1 px-3 py-2">
         <ul className="space-y-1">
           {dynamicNavItems.map((item) => {
@@ -209,14 +201,13 @@ export function DesktopSidebar({ isCollapsed: controlledIsCollapsed = false, onT
                 >
                   <Icon
                     className={cn(
-                      "h-5 w-5 transition-colors", 
+                      "h-5 w-5 transition-colors",
                       isActive ? "text-primary" : "group-hover:text-primary"
                     )}
                     strokeWidth={isActive ? 2.5 : 1.5}
                   />
                   {!isCollapsed && <span>{item.label}</span>}
-                  
-                  {/* Badges */}
+
                   {item.href === "/notifications" && unreadCount > 0 && (
                     <span className={cn(
                       "flex items-center justify-center rounded-full bg-primary font-bold text-primary-foreground shadow-sm",
@@ -239,10 +230,9 @@ export function DesktopSidebar({ isCollapsed: controlledIsCollapsed = false, onT
           })}
         </ul>
 
-        {/* Action Button: Create Location */}
         <div className="mt-6 px-3">
           {!user ? (
-            <Button 
+            <Button
               onClick={() => {
                 showLoginRequiredToast(router)
                 router.push("/login")
@@ -254,7 +244,7 @@ export function DesktopSidebar({ isCollapsed: controlledIsCollapsed = false, onT
               {!isCollapsed && <span>Thêm địa điểm</span>}
             </Button>
           ) : (
-            <CreateLocationDialog 
+            <CreateLocationDialog
               trigger={
                 <Button className={cn("w-full gap-3 bg-primary/10 text-primary hover:bg-primary/20 border-none shadow-none", isCollapsed ? "justify-center px-0" : "justify-start")} title={isCollapsed ? "Thêm địa điểm" : undefined}>
                   <MapPin className="h-5 w-5 shrink-0" />
@@ -266,13 +256,12 @@ export function DesktopSidebar({ isCollapsed: controlledIsCollapsed = false, onT
         </div>
       </nav>
 
-      {/* User Profile Bottom */}
       <div className="border-t border-border p-4">
         <div className={cn("flex items-center gap-2", isCollapsed ? "justify-center" : "justify-between")}>
           <Link
             href="/profile"
             onClick={(e) => {
-               if (!user) { e.preventDefault(); router.push("/login") }
+              if (!user) { e.preventDefault(); router.push("/login") }
             }}
             className={cn("flex flex-1 items-center gap-3 rounded-lg p-2 transition-colors hover:bg-muted", isCollapsed && "justify-center flex-none")}
             title={isCollapsed ? "Trang cá nhân" : undefined}
@@ -309,7 +298,6 @@ export function DesktopSidebar({ isCollapsed: controlledIsCollapsed = false, onT
           )}
         </div>
       </div>
-      {/* Persistent Map Container (Luôn giữ sống, không dùng display:none để map init được) */}
       <div id="persistent-map-container" className="fixed pointer-events-none opacity-0 -z-50" style={{ width: '100vw', height: '100vh', top: '-9999px' }} />
     </aside>
   )

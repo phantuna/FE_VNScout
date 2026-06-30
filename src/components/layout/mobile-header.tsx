@@ -2,9 +2,9 @@
 
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { 
-  Menu, Camera, Home, Search, Map, PlusSquare, 
-  Bell, MessageCircle, User, ShieldAlert, LogOut 
+import {
+  Menu, Camera, Home, Search, Map, PlusSquare,
+  Bell, MessageCircle, User, ShieldAlert, LogOut
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -22,13 +22,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { apiFetch } from "@/services/api.service"
 
 const NAV_ITEMS = [
-  { href: "/", icon: Home, label: "Feed" },
-  { href: "/explore", icon: Search, label: "Explore" },
-  { href: "/map", icon: Map, label: "Map" },
-  { href: "/create", icon: PlusSquare, label: "Create" },
-  { href: "/notifications", icon: Bell, label: "Notifications" },
-  { href: "/messages", icon: MessageCircle, label: "Messages" },
-  { href: "/profile", icon: User, label: "Profile" },
+  { href: "/", icon: Home, label: "Trang chủ" },
+  { href: "/explore", icon: Search, label: "Khám phá" },
+  { href: "/map", icon: Map, label: "Bản đồ" },
+  { href: "/create", icon: PlusSquare, label: "Đăng bài" },
+  { href: "/notifications", icon: Bell, label: "Thông báo" },
+  { href: "/messages", icon: MessageCircle, label: "Tin nhắn" },
+  { href: "/profile", icon: User, label: "Hồ sơ" },
 ]
 
 export function MobileHeader() {
@@ -45,18 +45,17 @@ export function MobileHeader() {
     dynamicNavItems.push({ href: "/admin", icon: ShieldAlert, label: "Quản lý" })
   }
 
-  // Reuse notification logic
   useEffect(() => {
     if (!user) return;
     apiFetch('/api/v1/notifications/unread-count')
       .then(count => setUnreadCount(count))
-      .catch(() => {});
+      .catch(() => { });
 
     import("@/services/chat.service").then(({ chatService }) => {
       chatService.getMyConversations().then(convs => {
         const total = convs.reduce((sum, c) => sum + c.unreadCount, 0)
         setUnreadChatCount(total)
-      }).catch(() => {})
+      }).catch(() => { })
     })
 
     const handleNotificationRead = (e: Event) => {
@@ -67,7 +66,7 @@ export function MobileHeader() {
         setUnreadCount(prev => Math.max(0, prev - 1));
       }
     };
-    
+
     const handleChatUpdate = (e: Event) => {
       const customEvent = e as CustomEvent;
       setUnreadChatCount(customEvent.detail)
@@ -86,7 +85,6 @@ export function MobileHeader() {
 
   return (
     <header className="md:hidden sticky top-0 z-50 flex h-14 items-center justify-between border-b border-border bg-card/95 backdrop-blur-md px-4">
-      {/* Logo */}
       <Link href="/" className="flex items-center gap-2">
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
           <Camera className="h-4 w-4 text-primary-foreground" />
@@ -94,7 +92,6 @@ export function MobileHeader() {
         <span className="font-serif text-lg font-bold">VPS</span>
       </Link>
 
-      {/* Hamburger Menu */}
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
           <Button variant="ghost" size="icon" className="h-10 w-10 relative">
@@ -121,7 +118,6 @@ export function MobileHeader() {
             </SheetTitle>
           </SheetHeader>
 
-          {/* Navigation */}
           <nav className="flex-1 overflow-y-auto p-4">
             <ul className="space-y-2">
               {dynamicNavItems.map((item) => {
@@ -162,7 +158,7 @@ export function MobileHeader() {
                         strokeWidth={isActive ? 2.5 : 1.5}
                       />
                       <span>{item.label}</span>
-                      
+
                       {/* Badges */}
                       {item.href === "/notifications" && unreadCount > 0 && (
                         <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
@@ -187,8 +183,8 @@ export function MobileHeader() {
               <Link
                 href="/profile"
                 onClick={(e) => {
-                   if (!user) { e.preventDefault(); router.push("/login") }
-                   setOpen(false)
+                  if (!user) { e.preventDefault(); router.push("/login") }
+                  setOpen(false)
                 }}
                 className="flex flex-1 items-center gap-3 rounded-lg p-2 transition-colors hover:bg-muted"
               >

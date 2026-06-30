@@ -106,7 +106,6 @@ export function ModerationIntelligence({ stats, posts, onViewPost }: ModerationI
 
   const totalInQueue = queue.reduce((sum, q) => sum + q.count, 0)
 
-  // Mock "flagged posts" — use real posts with some mock flag data
   const flaggedPosts = useMemo(() =>
     posts.slice(0, 3).map((post, i) => ({
       ...post,
@@ -119,7 +118,6 @@ export function ModerationIntelligence({ stats, posts, onViewPost }: ModerationI
 
   return (
     <div className="space-y-6">
-      {/* Intelligence Queue Table */}
       <div className="bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/20 overflow-hidden">
         <div className="p-6 lg:p-8 border-b border-slate-100 bg-gradient-to-r from-purple-50/30 to-white flex items-center justify-between">
           <div>
@@ -177,7 +175,6 @@ export function ModerationIntelligence({ stats, posts, onViewPost }: ModerationI
         </div>
       </div>
 
-      {/* Recent AI Flagged Posts */}
       {flaggedPosts.length > 0 && (
         <div className="bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/20 overflow-hidden">
           <div className="p-6 border-b border-slate-100 bg-slate-50/50">
@@ -190,17 +187,15 @@ export function ModerationIntelligence({ stats, posts, onViewPost }: ModerationI
           <div className="divide-y divide-slate-50">
             {flaggedPosts.map(post => (
               <div key={post.id} className="flex items-start gap-4 p-5 hover:bg-slate-50/50 transition-colors">
-                {/* Thumbnail */}
                 <div className="h-14 w-14 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
                   {post.photos?.[0]?.imageUrl
                     ? <img src={post.photos[0].imageUrl} alt="" className="h-full w-full object-cover" />
                     : <div className="h-full w-full flex items-center justify-center text-slate-300">
-                        <Bot className="h-6 w-6" />
-                      </div>
+                      <Bot className="h-6 w-6" />
+                    </div>
                   }
                 </div>
 
-                {/* Details */}
                 <div className="flex-1 min-w-0 space-y-2">
                   <div className="flex items-center gap-2 flex-wrap">
                     <Badge className="text-[9px] font-black bg-purple-50 text-purple-700 border-purple-200 shadow-none">
@@ -225,7 +220,6 @@ export function ModerationIntelligence({ stats, posts, onViewPost }: ModerationI
                   </div>
                 </div>
 
-                {/* Actions */}
                 <div className="flex flex-col gap-2 shrink-0">
                   <Button
                     size="sm"

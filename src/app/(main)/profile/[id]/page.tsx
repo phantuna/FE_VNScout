@@ -22,7 +22,6 @@ export default function UserProfilePage({
       try {
         setLoading(true)
 
-        // Fetch user data và map vào User type
         const userData = await apiFetch(`/users/${id}`)
         const mappedUser: User = {
           id: userData.id,
@@ -35,12 +34,10 @@ export default function UserProfilePage({
           postsCount: userData.postsCount || 0,
           level: typeof userData.level === "number" ? userData.level : 1,
           reputationScore: userData.reputationScore || 0,
-          // isFollowing sẽ được useFollow hook fetch lại từ /api/v1/follow/status
           isFollowing: false,
         }
         setUser(mappedUser)
 
-        // Fetch posts của user này
         const allPosts = await apiFetch("/api/v1/posts/getAll")
         const postsArray = (allPosts as any)?.content || allPosts || []
         setPosts((postsArray as Post[]).filter((p) => p.author?.id === id))

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Camera, ChevronLeft } from "lucide-react"
+import { Camera, ChevronLeft, X } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
@@ -40,7 +40,6 @@ export function PostImageGallery({ post }: PostImageGalleryProps) {
   return (
     <>
       <section>
-        {/* Desktop Gallery */}
         <div className="hidden md:grid h-[420px] lg:h-[500px] gap-3 overflow-hidden rounded-[2.5rem] bg-slate-100 shadow-inner">
           {imageUrls.length === 1 ? (
             <div className="relative h-full w-full overflow-hidden group cursor-pointer" onClick={() => setPreviewIndex(0)}>
@@ -92,7 +91,6 @@ export function PostImageGallery({ post }: PostImageGalleryProps) {
           )}
         </div>
 
-        {/* Mobile Scroll */}
         <div className="flex md:hidden snap-x snap-mandatory gap-2 overflow-x-auto pb-2">
           {imageUrls.map((url, i) => (
             <div key={i} className="relative flex-shrink-0 snap-center w-[85%] aspect-[4/3] overflow-hidden rounded-2xl cursor-pointer" onClick={() => setPreviewIndex(i)}>
@@ -105,14 +103,11 @@ export function PostImageGallery({ post }: PostImageGalleryProps) {
         </div>
       </section>
 
-      {/* Lightbox */}
       <Dialog open={previewIndex !== null} onOpenChange={open => !open && setPreviewIndex(null)}>
         <DialogContent className="max-w-[100vw] h-[100vh] p-0 border-none bg-white/70 backdrop-blur-2xl shadow-none flex items-center justify-center outline-none">
           <DialogTitle className="sr-only">Xem ảnh toàn màn hình</DialogTitle>
           <div className="relative w-full h-full flex items-center justify-center cursor-zoom-out" onClick={() => setPreviewIndex(null)}>
-            <Button variant="ghost" size="icon" className="fixed top-6 right-6 z-50 bg-slate-900/10 text-slate-800 hover:bg-slate-900/20 rounded-full h-12 w-12 backdrop-blur-xl border border-slate-900/10" onClick={e => { e.stopPropagation(); setPreviewIndex(null) }}>
-              <ChevronLeft className="h-8 w-8 rotate-180" />
-            </Button>
+
             {imageUrls.length > 1 && (
               <Button variant="ghost" size="icon" className="fixed left-6 z-50 bg-slate-900/5 text-slate-800 hover:bg-slate-900/20 rounded-full h-14 w-14 backdrop-blur-lg border border-slate-900/5 transition-all hover:scale-110" onClick={handlePrev}>
                 <ChevronLeft className="h-10 w-10" />

@@ -112,11 +112,11 @@ export function ProfileHeader({
                 <>
                   <Link href="/settings">
                     <Button variant="outline" className="bg-transparent text-sm" size="sm">
-                      Edit Profile
+                      Chỉnh sửa hồ sơ
                     </Button>
                   </Link>
                   <Button variant="outline" className="bg-transparent text-sm" size="sm">
-                    Share Profile
+                    Chia sẻ hồ sơ
                   </Button>
                 </>
               ) : canFollow ? (

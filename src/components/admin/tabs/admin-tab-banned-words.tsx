@@ -43,8 +43,6 @@ export function AdminTabBannedWords({
     setNewWord("")
   }
 
-  // Dữ liệu đã được Server lọc và trả về (có hỗ trợ tìm kiếm không dấu/có dấu từ DB)
-  // nên không cần dùng .filter() ở Client nữa để tránh làm mất kết quả.
   const filteredWords = bannedWords;
 
   return (

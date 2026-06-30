@@ -89,7 +89,7 @@ export function NotificationsView() {
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-border bg-card/95 backdrop-blur-md">
         <div className="flex items-center justify-between px-6 py-3">
-          <h2 className="text-lg font-bold text-foreground">Notifications</h2>
+          <h2 className="text-lg font-bold text-foreground">Thông báo</h2>
           {unreadCount > 0 && (
             <button
               type="button"
@@ -116,7 +116,7 @@ export function NotificationsView() {
                 : "bg-muted text-muted-foreground hover:bg-muted/80"
             )}
           >
-            All
+            Tất cả
           </button>
           <button
             type="button"
@@ -128,7 +128,7 @@ export function NotificationsView() {
                 : "bg-muted text-muted-foreground hover:bg-muted/80"
             )}
           >
-            Unread {unreadCount > 0 && `(${unreadCount})`}
+            Chưa đọc {unreadCount > 0 && `(${unreadCount})`}
           </button>
         </div>
       </header>

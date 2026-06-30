@@ -124,9 +124,9 @@ export function CreatePostView() {
   return (
     <div className="min-h-screen">
       <header className="sticky top-0 z-40 flex items-center justify-between border-b border-border bg-card/95 px-6 py-3 backdrop-blur-md">
-        <h2 className="text-lg font-bold text-foreground">New Post</h2>
+        <h2 className="text-lg font-bold text-foreground">Tạo bài đăng</h2>
         <Button size="sm" onClick={() => handleCreatePost(false)} disabled={!content.trim() || !selectedLocation || images.length === 0 || isCreatingPost}>
-          {isCreatingPost && <Loader2 className="h-4 w-4 animate-spin mr-2" />} Share
+          {isCreatingPost && <Loader2 className="h-4 w-4 animate-spin mr-2" />} Chia sẻ
         </Button>
       </header>
 
@@ -149,7 +149,7 @@ export function CreatePostView() {
               </div>
             </div>
 
-            <Textarea placeholder="Share your photo story, shooting experience, or tips..." value={content} onChange={e => setContent(e.target.value)} className="min-h-[120px] resize-none text-sm" />
+            <Textarea placeholder="Chia sẻ câu chuyện bức ảnh, trải nghiệm chụp, hoặc mẹo..." value={content} onChange={e => setContent(e.target.value)} className="min-h-[120px] resize-none text-sm" />
             <Separator className="my-5" />
 
             <div className="mb-5 space-y-2.5">

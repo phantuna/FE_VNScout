@@ -31,19 +31,19 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="vi">
+    <html lang="vi" suppressHydrationWarning>
       <body
         className={`${_inter.variable} ${_playfair.variable} font-sans antialiased`}
+        suppressHydrationWarning
       >
         <AuthProvider>{children}</AuthProvider>
         <Toaster />
-        
-        {/* VietMap Assets - Loaded globally for speed */}
-        <link 
-          rel="stylesheet" 
-          href="https://unpkg.com/@vietmap/vietmap-gl-js@6.0.1/dist/vietmap-gl.css" 
+
+        <link
+          rel="stylesheet"
+          href="https://unpkg.com/@vietmap/vietmap-gl-js@6.0.1/dist/vietmap-gl.css"
         />
-        <Script 
+        <Script
           src="https://unpkg.com/@vietmap/vietmap-gl-js@6.0.1/dist/vietmap-gl.js"
           strategy="afterInteractive"
         />

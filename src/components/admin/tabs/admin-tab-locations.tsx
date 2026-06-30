@@ -30,7 +30,6 @@ export function AdminTabLocations({
         <div className="flex justify-center p-20"><Loader2 className="animate-spin h-8 w-8 text-primary" /></div>
       ) : (
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-          {/* Sleek Integrated Table Header */}
           <div className="p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50">
             <div>
               <h2 className="text-sm font-extrabold text-slate-800">Danh sách Địa điểm Săn ảnh ({filteredLocations.length})</h2>
@@ -48,7 +47,6 @@ export function AdminTabLocations({
             </div>
           </div>
 
-          {/* Table body */}
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
@@ -89,11 +87,10 @@ export function AdminTabLocations({
                       <td className="p-4 text-right">
                         <button
                           onClick={() => toggleLocationDeletion(loc.id, loc.deleted)}
-                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black transition-all border shadow-sm hover:shadow-md ${
-                            loc.deleted 
+                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black transition-all border shadow-sm hover:shadow-md ${loc.deleted
                               ? "bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-300"
                               : "bg-white border-slate-200 text-slate-500 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200"
-                          }`}
+                            }`}
                         >
                           {loc.deleted ? <RotateCcw className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
                           {loc.deleted ? "Phê duyệt" : "Ẩn Spot"}
@@ -106,7 +103,6 @@ export function AdminTabLocations({
             </table>
           </div>
 
-          {/* Integrated Table Footer Pagination */}
           <div className="flex items-center justify-between border-t border-slate-100 p-4 bg-slate-50/50">
             <Button
               variant="outline"

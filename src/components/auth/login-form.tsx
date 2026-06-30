@@ -70,13 +70,17 @@ export function LoginForm() {
           password: values.password,
         }),
       })
-      
-      // The API returns ApiResponse<AuthenticationResponse>
-      // AuthenticationResponse has boolean authenticated, string token
-      const token = response.result?.token
-      
+
+      // apiFetch đã tự unwrap ApiResponse → response = { token, refreshToken, authenticated }
+      const token = response?.token
+      const refreshToken = response?.refreshToken
+
+      if (refreshToken) {
+        localStorage.setItem("refreshToken", refreshToken)
+      }
+
       if (token) {
-        login(token, { username: values.email.split('@')[0] }) 
+        login(token, { username: values.email.split('@')[0] })
         toast({
           title: (
             <div className="flex items-center gap-2">
@@ -126,11 +130,11 @@ export function LoginForm() {
         })
         return
       }
-      
+
       setIsForgotLoading(true)
       try {
         await apiFetch("/auth/forgot-password", { method: "POST", body: JSON.stringify({ email: forgotEmail }) })
-        
+
         toast({
           title: "Đã gửi hướng dẫn!",
           description: "Vui lòng kiểm tra hộp thư email của bạn để lấy mã OTP.",
@@ -146,7 +150,6 @@ export function LoginForm() {
         setIsForgotLoading(false)
       }
     } else {
-      // Step 2: Reset password
       if (!forgotOtp || forgotNewPassword.length < 6) {
         toast({
           variant: "destructive",
@@ -155,18 +158,18 @@ export function LoginForm() {
         })
         return
       }
-      
+
       setIsForgotLoading(true)
       try {
-        await apiFetch("/auth/reset-password", { 
-          method: "POST", 
-          body: JSON.stringify({ 
+        await apiFetch("/auth/reset-password", {
+          method: "POST",
+          body: JSON.stringify({
             email: forgotEmail,
             otp: forgotOtp,
             newPassword: forgotNewPassword
-          }) 
+          })
         })
-        
+
         toast({
           title: (
             <div className="flex items-center gap-2">
@@ -206,14 +209,13 @@ export function LoginForm() {
       </div>
 
 
-
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             control={form.control}
             name="email"
             render={({ field }) => (
-               <FormItem>
+              <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input placeholder="name@example.com" {...field} disabled={isLoading} />
@@ -226,13 +228,13 @@ export function LoginForm() {
             control={form.control}
             name="password"
             render={({ field }) => (
-               <FormItem>
+              <FormItem>
                 <FormLabel>Mật khẩu</FormLabel>
                 <FormControl>
                   <Input type="password" placeholder="••••••••" {...field} disabled={isLoading} />
                 </FormControl>
                 <div className="flex justify-end">
-                  <span 
+                  <span
                     onClick={() => setShowForgotModal(true)}
                     className="text-xs font-semibold text-primary hover:underline cursor-pointer"
                   >
@@ -257,16 +259,16 @@ export function LoginForm() {
             Đăng ký ngay
           </Link>
         </div>
-        <Link 
-          href="/" 
+        <Link
+          href="/"
           className="text-muted-foreground hover:text-primary transition-colors hover:underline mx-auto mt-2"
         >
           Tiếp tục dưới tư cách Khách
         </Link>
       </div>
 
-      <Dialog 
-        open={showForgotModal} 
+      <Dialog
+        open={showForgotModal}
         onOpenChange={(open) => {
           setShowForgotModal(open)
           if (!open) {
@@ -280,7 +282,7 @@ export function LoginForm() {
           <DialogHeader>
             <DialogTitle>Quên mật khẩu?</DialogTitle>
             <DialogDescription>
-              {forgotStep === 1 
+              {forgotStep === 1
                 ? "Nhập địa chỉ email đã đăng ký của bạn. Chúng tôi sẽ gửi hướng dẫn khôi phục mật khẩu qua email."
                 : "Nhập mã OTP chúng tôi vừa gửi vào email của bạn cùng với mật khẩu mới."}
             </DialogDescription>
@@ -289,9 +291,9 @@ export function LoginForm() {
             {forgotStep === 1 ? (
               <div className="space-y-2">
                 <label className="text-sm font-medium leading-none">Email</label>
-                <Input 
-                  type="email" 
-                  placeholder="name@example.com" 
+                <Input
+                  type="email"
+                  placeholder="name@example.com"
                   value={forgotEmail}
                   onChange={(e) => setForgotEmail(e.target.value)}
                   disabled={isForgotLoading}
@@ -302,9 +304,9 @@ export function LoginForm() {
               <>
                 <div className="space-y-2">
                   <label className="text-sm font-medium leading-none">Mã xác nhận (OTP)</label>
-                  <Input 
-                    type="text" 
-                    placeholder="Nhập mã 6 số" 
+                  <Input
+                    type="text"
+                    placeholder="Nhập mã 6 số"
                     value={forgotOtp}
                     onChange={(e) => setForgotOtp(e.target.value)}
                     disabled={isForgotLoading}
@@ -313,9 +315,9 @@ export function LoginForm() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium leading-none">Mật khẩu mới</label>
-                  <Input 
-                    type="password" 
-                    placeholder="••••••••" 
+                  <Input
+                    type="password"
+                    placeholder="••••••••"
                     value={forgotNewPassword}
                     onChange={(e) => setForgotNewPassword(e.target.value)}
                     disabled={isForgotLoading}

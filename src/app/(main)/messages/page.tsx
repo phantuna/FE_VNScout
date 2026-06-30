@@ -27,14 +27,12 @@ export default function MessagesPage() {
 
   const { connect, disconnect, sendMessage, isConnected, messages, clearMessages, setMessages } = useChat()
 
-  // 1. Fetch conversations & all users on mount
   useEffect(() => {
     if (!user) return
     chatService.getMyConversations().then(setConversations).catch(console.error)
     getAllUsers().then(setAllUsers).catch(console.error)
   }, [user])
 
-  // 2. Connect WebSocket
   useEffect(() => {
     if (user) {
       connect(user.id)
@@ -42,16 +40,12 @@ export default function MessagesPage() {
     return () => disconnect()
   }, [user, connect, disconnect])
 
-  // 3. Handle selecting a conversation
   useEffect(() => {
     if (!activeConversation) return
 
-    // Tải lịch sử chat khi chọn conversation
     chatService.getMessages(activeConversation.id, 0, 50).then((data: { content: ChatMessage[] }) => {
-      // Đảo ngược để tin cũ ở trên, tin mới ở dưới
       setHistory(data.content.reverse())
-      clearMessages() // Clear realtime queue
-      // Đánh dấu đã đọc
+      clearMessages()
       if (activeConversation.unreadCount > 0) {
         chatService.markAsRead(activeConversation.id).catch(console.error)
         setConversations(prev => prev.map(c =>
@@ -62,20 +56,17 @@ export default function MessagesPage() {
 
   }, [activeConversation, clearMessages])
 
-  // 4. Scroll to bottom when new messages arrive
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight
     }
   }, [history, messages])
 
-  // Broadcast unread count to global sidebar
   useEffect(() => {
     const total = conversations.reduce((sum, c) => sum + c.unreadCount, 0)
     window.dispatchEvent(new CustomEvent('chatUnreadUpdate', { detail: total }))
   }, [conversations])
 
-  // 5. Cập nhật Sidebar (Inbox) khi có tin nhắn mới realtime
   useEffect(() => {
     if (messages.length === 0) return
 
@@ -88,16 +79,14 @@ export default function MessagesPage() {
         updatedConv.lastMessageContent = latestMsg.content
         updatedConv.lastMessageAt = latestMsg.sentAt
 
-        // Nếu tin nhắn đến từ người khác và không phải là phòng chat đang mở -> tăng số đếm
         if (latestMsg.senderId !== user?.id && activeConversation?.id !== updatedConv.id) {
           updatedConv.unreadCount += 1
         }
 
         const newConversations = [...prev]
         newConversations.splice(convIndex, 1)
-        return [updatedConv, ...newConversations] // Đưa lên đầu
+        return [updatedConv, ...newConversations]
       } else {
-        // Có tin nhắn từ người lạ chưa có trong Inbox, fetch lại inbox
         chatService.getMyConversations().then(setConversations).catch(console.error)
         return prev
       }
@@ -109,8 +98,6 @@ export default function MessagesPage() {
     if (!inputMsg.trim() || !activeConversation || !user) return
 
     const msgContent = inputMsg.trim()
-
-    // 1. Optimistic UI: Hiển thị ngay lập tức
     const optimisticMsg: ChatMessage = {
       id: "temp-" + Date.now(),
       conversationId: activeConversation.id,
@@ -123,18 +110,14 @@ export default function MessagesPage() {
     }
     setMessages(prev => [...prev, optimisticMsg])
 
-    // 2. Gửi đi
     sendMessage(activeConversation.otherUserId, msgContent)
     setInputMsg("")
   }
 
-  // Combine history from DB + new realtime messages for the active conversation
-  // Loại bỏ các tin nhắn bị lặp (trường hợp backend echo lại tin nhắn vừa gửi bằng Optimistic UI)
   const displayMessages = [
     ...history,
     ...messages.filter((m: ChatMessage) => m.conversationId === activeConversation?.id)
   ].reduce((acc: ChatMessage[], current) => {
-    // Nếu có 1 tin nhắn từ server trùng nội dung và người gửi với tin nhắn temp (cách nhau dưới 5s), thay thế tin temp
     const isDuplicate = acc.find(
       item => (item.id === current.id) ||
         (item.id.startsWith('temp-') && !current.id.startsWith('temp-') && item.content === current.content && item.senderId === current.senderId)
@@ -142,7 +125,6 @@ export default function MessagesPage() {
     if (!isDuplicate) {
       acc.push(current)
     } else if (isDuplicate.id.startsWith('temp-') && !current.id.startsWith('temp-')) {
-      // Thay thế temp bằng bản real
       const idx = acc.findIndex(i => i.id === isDuplicate.id)
       acc[idx] = current
     }
@@ -175,7 +157,6 @@ export default function MessagesPage() {
 
   return (
     <div className="flex h-screen bg-background pt-0">
-      {/* Cột trái: Inbox */}
       <div className="w-1/3 min-w-[300px] border-r border-border bg-card flex flex-col h-full">
         <div className="p-4 border-b border-border">
           <h2 className="text-xl font-semibold font-serif mb-4">Tin nhắn</h2>
@@ -191,7 +172,6 @@ export default function MessagesPage() {
         </div>
         <div className="flex-1 overflow-y-auto">
           {searchQuery ? (
-            // Kết quả tìm kiếm User
             <div className="py-2">
               <p className="px-4 text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">Kết quả tìm kiếm</p>
               {filteredUsers.length === 0 ? (
@@ -215,7 +195,6 @@ export default function MessagesPage() {
               )}
             </div>
           ) : (
-            // Danh sách Conversations
             <>
               {conversations.length === 0 ? (
                 <div className="p-4 text-center text-muted-foreground text-sm">
@@ -259,11 +238,9 @@ export default function MessagesPage() {
         </div>
       </div>
 
-      {/* Cột phải: Chat Window */}
       <div className="flex-1 flex flex-col bg-background h-full">
         {activeConversation ? (
           <>
-            {/* Header */}
             <div className="h-[73px] border-b border-border p-4 flex items-center gap-3 bg-card shrink-0">
               <Link href={`/profile/${activeConversation.otherUserId}`}>
                 <Avatar className="h-10 w-10 transition-opacity hover:opacity-80 cursor-pointer">
@@ -281,15 +258,14 @@ export default function MessagesPage() {
               </div>
             </div>
 
-            {/* Messages Area */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4" ref={scrollRef}>
               {displayMessages.map((msg, index) => {
                 const isMe = msg.senderId === user.id
                 return (
                   <div key={index} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
                     <div className={`max-w-[70%] rounded-2xl px-4 py-2 ${isMe
-                        ? "bg-primary text-primary-foreground rounded-tr-sm"
-                        : "bg-muted text-foreground rounded-tl-sm"
+                      ? "bg-primary text-primary-foreground rounded-tr-sm"
+                      : "bg-muted text-foreground rounded-tl-sm"
                       }`}>
                       <p className="text-sm">{msg.content}</p>
                       <span className={`text-[10px] block mt-1 ${isMe ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
@@ -301,7 +277,6 @@ export default function MessagesPage() {
               })}
             </div>
 
-            {/* Input Area */}
             <div className="p-4 bg-card border-t border-border shrink-0">
               <form onSubmit={handleSend} className="flex gap-2">
                 <Input

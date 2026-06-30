@@ -52,7 +52,6 @@ export function UserReputationCenter({ users }: UserReputationCenterProps) {
 
   return (
     <div className="bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/20 overflow-hidden">
-      {/* Header */}
       <div className="p-6 lg:p-8 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white">
         <div className="flex items-center justify-between">
           <div>
@@ -73,7 +72,6 @@ export function UserReputationCenter({ users }: UserReputationCenterProps) {
         </div>
       </div>
 
-      {/* Summary Row */}
       <div className="grid grid-cols-3 divide-x divide-slate-100 border-b border-slate-100">
         <div className="px-4 py-3 text-center">
           <p className="text-lg font-black text-emerald-600">{usersWithTrust.filter(u => u.trustScore >= 80).length}</p>
@@ -89,7 +87,6 @@ export function UserReputationCenter({ users }: UserReputationCenterProps) {
         </div>
       </div>
 
-      {/* User List */}
       <div className="divide-y divide-slate-50">
         {usersWithTrust.map((user, idx) => {
           const trust = getTrustLabel(user.trustScore)
@@ -102,7 +99,6 @@ export function UserReputationCenter({ users }: UserReputationCenterProps) {
                 className="w-full flex items-center gap-4 px-6 py-4 text-left"
                 onClick={() => setExpanded(isExpanded ? null : user.id)}
               >
-                {/* Rank */}
                 <div className="w-7 shrink-0 text-center">
                   {medal
                     ? <span className="text-base">{medal}</span>
@@ -110,7 +106,6 @@ export function UserReputationCenter({ users }: UserReputationCenterProps) {
                   }
                 </div>
 
-                {/* Avatar */}
                 <div className="h-9 w-9 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
                   {user.avatarUrl
                     ? <img src={user.avatarUrl} alt="" className="h-full w-full object-cover" />
@@ -118,7 +113,6 @@ export function UserReputationCenter({ users }: UserReputationCenterProps) {
                   }
                 </div>
 
-                {/* Info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-xs font-black text-slate-800 truncate">{user.username}</span>
@@ -132,7 +126,6 @@ export function UserReputationCenter({ users }: UserReputationCenterProps) {
                   </div>
                 </div>
 
-                {/* Badge + Expand */}
                 <div className="flex items-center gap-2 shrink-0">
                   <Badge className={`text-[9px] font-black px-2 py-0.5 border ${trust.bg} ${trust.color} shadow-none`}>
                     {trust.label}
@@ -144,7 +137,6 @@ export function UserReputationCenter({ users }: UserReputationCenterProps) {
                 </div>
               </button>
 
-              {/* Expanded detail */}
               {isExpanded && (
                 <div className="px-6 pb-5 animate-in slide-in-from-top-1 duration-200">
                   <div className="ml-[4.75rem] bg-slate-50 rounded-2xl border border-slate-100 p-4 grid grid-cols-2 sm:grid-cols-3 gap-3">

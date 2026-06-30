@@ -297,7 +297,7 @@ export function PostsFeedView() {
       {/* ── Sticky Header ── */}
       <div className="sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur-md pt-4 md:pt-8">
         <div className="px-4 md:px-8">
-          <h1 className="text-3xl font-bold text-foreground">Khám Phá Địa Điểm</h1>
+          <h1 className="text-3xl font-bold text-foreground">Điểm Đến Nổi Bật</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Tìm các địa điểm hot và cộng đồng tại mỗi nơi
           </p>

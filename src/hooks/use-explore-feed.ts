@@ -307,16 +307,11 @@ export function useExploreFeed() {
 
   const filteredPosts = posts.filter(p =>
     !searchQuery ||
-    p.caption?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.location?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     p.tags?.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()))
   )
 
   const filteredUsers = users
-    .filter(u =>
-      u.id !== user?.id &&
-      (!searchQuery || u.username?.toLowerCase().includes(searchQuery.toLowerCase()))
-    )
+    .filter(u => u.id !== user?.id)
     .sort((a, b) => (b.followersCount ?? 0) - (a.followersCount ?? 0))
 
   return {

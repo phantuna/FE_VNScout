@@ -25,7 +25,6 @@ export default function MyProfilePage() {
       if (!user?.id) return
       try {
         setFetchingPosts(true)
-        // For now fetch all and filter, or use a filtered endpoint if available
         const allPosts = await apiFetch("/api/v1/posts/getAll")
         const postsArray = (allPosts as any)?.content || allPosts || []
         setPosts(postsArray.filter((p: any) => p.author?.id === user.id))

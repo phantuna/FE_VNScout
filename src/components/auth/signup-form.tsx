@@ -57,11 +57,9 @@ export function SignupForm() {
           username: values.username,
           email: values.email,
           password: values.password,
-          // birthday if needed can be added here
         }),
       })
-      
-      // Chuyển hướng về trang login sau khi đăng ký thành công
+
       toast({
         title: (
           <div className="flex items-center gap-2">
@@ -108,7 +106,7 @@ export function SignupForm() {
             control={form.control}
             name="username"
             render={({ field }) => (
-               <FormItem>
+              <FormItem>
                 <FormLabel>Tên người dùng</FormLabel>
                 <FormControl>
                   <Input placeholder="johndoe" {...field} disabled={isLoading} />
@@ -121,7 +119,7 @@ export function SignupForm() {
             control={form.control}
             name="email"
             render={({ field }) => (
-               <FormItem>
+              <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input placeholder="name@example.com" {...field} disabled={isLoading} />
@@ -134,7 +132,7 @@ export function SignupForm() {
             control={form.control}
             name="password"
             render={({ field }) => (
-               <FormItem>
+              <FormItem>
                 <FormLabel>Mật khẩu</FormLabel>
                 <FormControl>
                   <Input type="password" placeholder="••••••••" {...field} disabled={isLoading} />
@@ -157,8 +155,8 @@ export function SignupForm() {
             Đăng nhập ngay
           </Link>
         </div>
-        <Link 
-          href="/" 
+        <Link
+          href="/"
           className="text-muted-foreground hover:text-primary transition-colors hover:underline mx-auto mt-2"
         >
           Tiếp tục dưới tư cách Khách

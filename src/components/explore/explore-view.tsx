@@ -40,7 +40,6 @@ export function ExploreLocationsView() {
 
   return (
     <main className="min-h-screen bg-background">
-      {/* Header */}
       <div className="border-b border-border bg-card">
         <div className="mx-auto max-w-7xl px-6 py-6">
           <h1 className="text-3xl font-bold text-foreground">Khám Phá Địa Điểm</h1>
@@ -50,7 +49,6 @@ export function ExploreLocationsView() {
         </div>
       </div>
 
-      {/* Locations Grid */}
       <div className="mx-auto max-w-7xl px-6 py-8">
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {hotLocations.map((location) => {
@@ -63,7 +61,6 @@ export function ExploreLocationsView() {
                 href={`/location/${location.id}`}
                 className="group relative overflow-hidden rounded-xl border border-border bg-card transition-all hover:shadow-lg hover:border-primary"
               >
-                {/* Image or Color Background */}
                 <div className="relative aspect-square w-full overflow-hidden bg-gradient-to-br from-orange-400 to-orange-600">
                   {previewImage ? (
                     <Image
@@ -79,18 +76,15 @@ export function ExploreLocationsView() {
                     </div>
                   )}
 
-                  {/* Post Count Badge */}
                   {postCount > 0 && (
                     <div className="absolute bottom-2 right-2 rounded-full bg-black/60 px-3 py-1 text-sm font-semibold text-white">
                       {postCount} {postCount === 1 ? "bài" : "bài"}
                     </div>
                   )}
 
-                  {/* Overlay Gradient */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                 </div>
 
-                {/* Info Section */}
                 <div className="relative p-4">
                   <h3 className="line-clamp-2 text-base font-semibold text-foreground">
                     {location.name}
@@ -106,7 +100,6 @@ export function ExploreLocationsView() {
                     {location.address}
                   </p>
 
-                  {/* Stats */}
                   <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
                     <div className="flex items-center gap-1 text-xs text-muted-foreground">
                       <MapPin className="h-3 w-3" />

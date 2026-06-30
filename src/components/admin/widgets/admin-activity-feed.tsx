@@ -48,22 +48,22 @@ const EVENT_TEMPLATES: Omit<ActivityEvent, "id" | "timestamp">[] = [
 ]
 
 const SEVERITY_CONFIG: Record<EventSeverity, { bg: string; border: string; dot: string; icon: React.ElementType; iconColor: string }> = {
-  danger:  { bg: "bg-red-500/5",    border: "border-red-500/20",    dot: "bg-red-400",    icon: AlertTriangle, iconColor: "text-red-400" },
-  warning: { bg: "bg-amber-500/5",  border: "border-amber-500/20",  dot: "bg-amber-400",  icon: AlertTriangle, iconColor: "text-amber-400" },
-  success: { bg: "bg-emerald-500/5",border: "border-emerald-500/20",dot: "bg-emerald-400",icon: CheckCircle,   iconColor: "text-emerald-400" },
-  info:    { bg: "bg-blue-500/5",   border: "border-blue-500/20",   dot: "bg-blue-400",   icon: Zap,           iconColor: "text-blue-400" },
+  danger: { bg: "bg-red-500/5", border: "border-red-500/20", dot: "bg-red-400", icon: AlertTriangle, iconColor: "text-red-400" },
+  warning: { bg: "bg-amber-500/5", border: "border-amber-500/20", dot: "bg-amber-400", icon: AlertTriangle, iconColor: "text-amber-400" },
+  success: { bg: "bg-emerald-500/5", border: "border-emerald-500/20", dot: "bg-emerald-400", icon: CheckCircle, iconColor: "text-emerald-400" },
+  info: { bg: "bg-blue-500/5", border: "border-blue-500/20", dot: "bg-blue-400", icon: Zap, iconColor: "text-blue-400" },
 }
 
 const TYPE_ICONS: Record<EventType, React.ElementType> = {
-  report:            ShieldAlert,
-  verified:          CheckCircle,
-  ai_warning:        Bot,
-  level_up:          Trophy,
-  post_hidden:       EyeOff,
-  user_joined:       UserPlus,
+  report: ShieldAlert,
+  verified: CheckCircle,
+  ai_warning: Bot,
+  level_up: Trophy,
+  post_hidden: EyeOff,
+  user_joined: UserPlus,
   location_approved: MapPin,
-  ban:               ShieldAlert,
-  exif_mismatch:     AlertTriangle,
+  ban: ShieldAlert,
+  exif_mismatch: AlertTriangle,
 }
 
 function formatRelativeTime(date: Date): string {
@@ -91,7 +91,6 @@ export function ActivityFeed({ totalReports = 0 }: ActivityFeedProps) {
   const [newEventId, setNewEventId] = useState<string | null>(null)
   const [tick, setTick] = useState(0)
 
-  // Simulate live events
   useEffect(() => {
     const delay = 8000 + Math.random() * 9000
     const timer = setTimeout(() => {
@@ -108,7 +107,6 @@ export function ActivityFeed({ totalReports = 0 }: ActivityFeedProps) {
     return () => clearTimeout(timer)
   }, [events])
 
-  // Relative time tick every 30s
   useEffect(() => {
     const interval = setInterval(() => setTick(t => t + 1), 30000)
     return () => clearInterval(interval)
@@ -116,7 +114,6 @@ export function ActivityFeed({ totalReports = 0 }: ActivityFeedProps) {
 
   return (
     <div className="bg-slate-900 rounded-3xl border border-slate-800 shadow-xl shadow-slate-900/40 overflow-hidden flex flex-col h-full">
-      {/* Header */}
       <div className="px-6 pt-6 pb-4 flex items-center justify-between shrink-0">
         <div>
           <h3 className="text-base font-black text-white flex items-center gap-2">
@@ -136,7 +133,6 @@ export function ActivityFeed({ totalReports = 0 }: ActivityFeedProps) {
         </div>
       </div>
 
-      {/* Feed */}
       <div className="flex-1 overflow-y-auto px-3 pb-4 space-y-1.5 scrollbar-hide" style={{ maxHeight: 320 }}>
         {events.map((event, idx) => {
           const cfg = SEVERITY_CONFIG[event.severity]
@@ -170,7 +166,6 @@ export function ActivityFeed({ totalReports = 0 }: ActivityFeedProps) {
         })}
       </div>
 
-      {/* Footer */}
       <div className="px-6 py-3 border-t border-slate-800 flex items-center justify-between shrink-0">
         <span className="text-[10px] font-bold text-slate-600">{events.length} sự kiện ghi nhận</span>
         <div className="flex items-center gap-1.5">

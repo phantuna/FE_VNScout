@@ -14,9 +14,6 @@ interface AdminChartsProps {
   usersPerDay?: { day: string; count: number }[]
 }
 
-// Real data is now passed from the backend
-
-// ─── Custom Tooltip ─────────────────────────────────────────────────────────────
 
 const CustomTooltip = ({ active, payload, label, suffix = "" }: any) => {
   if (active && payload?.length) {
@@ -31,8 +28,6 @@ const CustomTooltip = ({ active, payload, label, suffix = "" }: any) => {
   }
   return null
 }
-
-// ─── Main Component ─────────────────────────────────────────────────────────────
 
 export function AdminCharts({ totalPosts, totalUsers, postsPerDay, usersPerDay }: AdminChartsProps) {
   const postsData = useMemo(() => {
@@ -51,7 +46,6 @@ export function AdminCharts({ totalPosts, totalUsers, postsPerDay, usersPerDay }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {/* 1. Line Chart — Posts per day */}
       <div className="bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/20 p-6">
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -89,7 +83,6 @@ export function AdminCharts({ totalPosts, totalUsers, postsPerDay, usersPerDay }
         </ResponsiveContainer>
       </div>
 
-      {/* 2. Bar Chart — Active users */}
       <div className="bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/20 p-6">
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -114,8 +107,8 @@ export function AdminCharts({ totalPosts, totalUsers, postsPerDay, usersPerDay }
                 <Cell
                   key={i}
                   fill={i === usersData.length - 1 || i === usersData.length - 2
-                    ? "#F7C844"  // weekend highlight (sand yellow)
-                    : "#3B7A57"  // normal days (forest green)
+                    ? "#F7C844"
+                    : "#3B7A57"
                   }
                 />
               ))}

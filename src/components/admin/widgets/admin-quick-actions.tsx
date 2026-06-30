@@ -130,9 +130,7 @@ export function QuickActions({ onApproveLocations, onViewHotReports, onReloadDat
 
   return (
     <>
-      {/* Floating Panel */}
       <div className="fixed bottom-24 right-4 z-50 flex flex-col items-end gap-2">
-        {/* Actions list */}
         {isOpen && (
           <div className="mb-2 bg-slate-900 rounded-2xl border border-slate-700/50 shadow-2xl shadow-slate-900/60 overflow-hidden w-60 animate-in slide-in-from-bottom-2 fade-in-0 duration-200">
             <div className="px-4 py-3 border-b border-slate-800">
@@ -162,7 +160,6 @@ export function QuickActions({ onApproveLocations, onViewHotReports, onReloadDat
           </div>
         )}
 
-        {/* FAB Button */}
         <button
           onClick={() => setIsOpen(v => !v)}
           className={`
@@ -181,7 +178,6 @@ export function QuickActions({ onApproveLocations, onViewHotReports, onReloadDat
         <NotifyModal
           onClose={() => setShowNotifyModal(false)}
           onSend={msg => {
-            // TODO: POST /api/admin/notifications
             console.log("Sending notification:", msg)
           }}
         />

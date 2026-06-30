@@ -30,6 +30,7 @@ interface ExploreTabPhotosProps {
   user: User | null
   handleToggleSave: (postId: string) => void
   savedSet: Set<string>
+  setSearchQuery: React.Dispatch<React.SetStateAction<string>>
 }
 
 export function ExploreTabPhotos({
@@ -49,6 +50,7 @@ export function ExploreTabPhotos({
   user,
   handleToggleSave,
   savedSet,
+  setSearchQuery,
 }: ExploreTabPhotosProps) {
   return (
     <>
@@ -58,7 +60,7 @@ export function ExploreTabPhotos({
         <div className="rounded-2xl border border-border bg-card p-5">
           <div className="mb-4 flex items-center gap-2">
             <MapPin className="h-4 w-4 text-muted-foreground" />
-            <h3 className="text-sm font-semibold text-foreground">Recent Check-ins</h3>
+            <h3 className="text-sm font-semibold text-foreground">Check-in gần đây</h3>
           </div>
           <div className="space-y-3">
             {posts
@@ -69,7 +71,7 @@ export function ExploreTabPhotos({
                 const locId = loc.id || loc.name;
                 return locId && self.findIndex((p: any) => (p.location?.id || p.location?.name) === locId) === index;
               })
-              .slice(0, 10)
+              .slice(0, 5)
               .map((post) => {
               const thumb = post.photos?.[0]?.imageUrl
               return (
@@ -96,15 +98,6 @@ export function ExploreTabPhotos({
                         {post.location.province} • {post.location?.checkInCount || 0} lượt check-in
                       </p>
                     )}
-                    <div className="flex items-center gap-1.5">
-                       <Avatar className="h-4 w-4">
-                         <AvatarImage src={post.author?.avatarUrl || "/default-avatar.svg"} />
-                         <AvatarFallback className="text-[8px]">{post.author?.username?.charAt(0)}</AvatarFallback>
-                       </Avatar>
-                      <span className="text-[10px] text-muted-foreground truncate">
-                        by {post.author?.username}
-                      </span>
-                    </div>
                   </div>
                 </Link>
               )
@@ -119,13 +112,14 @@ export function ExploreTabPhotos({
         <div className="rounded-2xl border border-border bg-card p-5">
           <div className="mb-4 flex items-center gap-2">
             <TrendingUp className="h-4 w-4 text-primary" />
-            <h3 className="text-sm font-semibold text-foreground">Trending Tags</h3>
+            <h3 className="text-sm font-semibold text-foreground">Hashtag nổi bật</h3>
           </div>
           <div className="flex flex-wrap gap-2">
             {sortedTrendingTags.length > 0 ? sortedTrendingTags.map((tag) => (
               <Badge
                 key={tag.id}
                 variant="secondary"
+                onClick={() => setSearchQuery(tag.name)}
                 className="cursor-pointer px-3 py-1.5 text-xs font-medium transition-colors hover:bg-primary/10 hover:text-primary"
               >
                 #{tag.name}
@@ -143,7 +137,7 @@ export function ExploreTabPhotos({
         <div className="rounded-2xl border border-border bg-card p-5">
           <div className="mb-4 flex items-center gap-2">
             <Camera className="h-4 w-4 text-primary" />
-            <h3 className="text-sm font-semibold text-foreground">Photographers to Follow</h3>
+            <h3 className="text-sm font-semibold text-foreground">Nhiếp ảnh gia đáng theo dõi</h3>
           </div>
           <div className="space-y-3">
             {filteredUsers.slice(0, 10).map((u) => (
@@ -186,7 +180,7 @@ export function ExploreTabPhotos({
       {/* Photo Grid */}
       <div>
         <h3 className="mb-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">
-          Discover Photos
+          Khám phá ảnh
         </h3>
         <div className="columns-2 sm:columns-3 md:columns-4 lg:columns-5 gap-4 space-y-4">
           {filteredPosts

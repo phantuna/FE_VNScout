@@ -42,15 +42,14 @@ export function AdminTabUsers({
           <div className="flex justify-center p-20"><Loader2 className="animate-spin h-8 w-8 text-primary" /></div>
         ) : (
           <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-            {/* Sleek Integrated Table Header */}
             <div className="p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50">
               <div>
                 <h2 className="text-sm font-extrabold text-slate-800">Danh sách Thành viên ({filteredUsers.length})</h2>
                 <p className="text-slate-400 text-[11px] font-bold mt-0.5">Quản lý toàn bộ tài khoản người dùng trên hệ thống, phân quyền và xử lý vi phạm.</p>
               </div>
               <div className="flex flex-col sm:flex-row gap-3">
-                <Button 
-                  variant={showOnlyAdmins ? "default" : "outline"} 
+                <Button
+                  variant={showOnlyAdmins ? "default" : "outline"}
                   onClick={() => setShowOnlyAdmins(!showOnlyAdmins)}
                   size="sm"
                   className={showOnlyAdmins ? "bg-orange-500 hover:bg-orange-600" : "bg-white"}
@@ -71,7 +70,6 @@ export function AdminTabUsers({
               </div>
             </div>
 
-            {/* Table body */}
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
@@ -146,11 +144,10 @@ export function AdminTabUsers({
                               </button>
                               <button
                                 onClick={() => user.deleted ? handleUnbanUser(user.id) : handleBanUser(user.id)}
-                                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black transition-all border shadow-sm hover:shadow-md ${
-                                  user.deleted 
+                                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black transition-all border shadow-sm hover:shadow-md ${user.deleted
                                     ? "bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-300"
                                     : "bg-white border-slate-200 text-slate-500 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200"
-                                }`}
+                                  }`}
                               >
                                 {user.deleted ? <RotateCcw className="h-3 w-3" /> : <Ban className="h-3 w-3" />}
                                 {user.deleted ? "Mở khóa" : "Khóa"}
@@ -165,7 +162,6 @@ export function AdminTabUsers({
               </table>
             </div>
 
-            {/* Integrated Table Footer Pagination */}
             <div className="flex items-center justify-between border-t border-slate-100 p-4 bg-slate-50/50">
               <Button
                 variant="outline"
@@ -193,7 +189,6 @@ export function AdminTabUsers({
         )}
       </div>
 
-      {/* TAB 3b: USER REPUTATION CENTER */}
       {!tabLoading && allUsers.length > 0 && (
         <div className="mt-6 animate-in fade-in-50 duration-200">
           <UserReputationCenter users={allUsers} />

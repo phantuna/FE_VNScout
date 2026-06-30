@@ -62,7 +62,6 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
                 }
                 isRefreshing = false
                 onRefreshed(newToken)
-                // Retry request
                 headers["Authorization"] = `Bearer ${newToken}`
                 const retryResponse = await fetch(`${API_BASE_URL}${endpoint}`, {
                   ...options,
@@ -71,10 +70,12 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
                 let retryData
                 try { retryData = await retryResponse.json() } catch (_) { retryData = null }
                 if (!retryResponse.ok) throw new Error("Retry failed")
+                if (retryData && typeof retryData === 'object' && retryData.code === 1000 && 'result' in retryData) {
+                  return retryData.result
+                }
                 return retryData
               }
             } else {
-              // Refresh failed
               localStorage.removeItem("token")
               localStorage.removeItem("refreshToken")
               window.location.href = "/login"
@@ -87,7 +88,6 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
             isRefreshing = false
           }
         } else {
-          // Wait for refresh
           return new Promise((resolve) => {
             subscribeTokenRefresh(async (newToken: string) => {
               headers["Authorization"] = `Bearer ${newToken}`
@@ -114,10 +114,7 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
     )
     error.status = response.status
     error.data = data
-    
-    // Tự động bắn Toast nếu là lỗi Spam (429) để báo cho người dùng
-    // Phải bọc trong kiểm tra window để tránh lỗi Hydration SSR của Next.js
-    // Sử dụng setTimeout để tách biệt với luồng render/hydration của React, tránh Error #418
+
     if (typeof window !== "undefined" && response.status === 429) {
       setTimeout(() => {
         toast({
@@ -127,8 +124,12 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
         })
       }, 0)
     }
-    
+
     throw error
+  }
+
+  if (data && typeof data === 'object' && data.code === 1000 && 'result' in data) {
+    return data.result
   }
 
   return data

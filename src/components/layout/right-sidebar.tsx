@@ -14,19 +14,22 @@ interface SuggestedUser {
   username: string
   avatarUrl?: string
   level?: string
+  followersCount?: number
 }
 
 interface TagItem {
   id: string
   name: string
+  count?: number
 }
 
 interface RecentPost {
   id: string
   author?: { username?: string; avatarUrl?: string }
-  location?: { name?: string; province?: string }
+  location?: { id?: string; name?: string; province?: string; postCount?: number; checkInCount?: number }
   photos?: { imageUrl: string }[]
   images?: string[]
+  dynamicCheckInCount?: number
 }
 
 export function RightSidebar() {
@@ -51,33 +54,59 @@ export function RightSidebar() {
             setSuggestedUsers(
               arr
                 .filter((u: SuggestedUser) => u.id !== currentUser?.id)
-                .slice(0, 10)
+                .sort((a: any, b: any) => (b.followersCount || 0) - (a.followersCount || 0))
+                .slice(0, 5)
             )
           }
         }
+        let fallbackTags: TagItem[] = []
         if (tagsData.status === "fulfilled" && tagsData.value) {
           const arr = tagsData.value.content || tagsData.value || []
           if (Array.isArray(arr)) {
-            setTags(arr.slice(0, 10))
+            fallbackTags = arr.slice(0, 10).map((t: any) => ({ ...t, count: 0 }))
+            setTags(fallbackTags)
           }
         }
         if (postsData.status === "fulfilled" && postsData.value) {
           const arr = postsData.value.content || postsData.value || []
           if (Array.isArray(arr)) {
-            const unique: RecentPost[] = [];
-            const seen = new Set<string>();
+            const tagCounts: Record<string, number> = {}
+            arr.forEach((post: any) => {
+              if (Array.isArray(post.tags)) {
+                post.tags.forEach((t: string) => {
+                  const cleaned = t.trim()
+                  if (cleaned) tagCounts[cleaned] = (tagCounts[cleaned] || 0) + 1
+                })
+              }
+            })
+            const trendingTags = Object.entries(tagCounts)
+              .sort((a, b) => b[1] - a[1])
+              .slice(0, 10)
+              .map(([name, count]) => ({ id: name, name, count }))
+            
+            if (trendingTags.length > 0) setTags(trendingTags)
+            else setTags(fallbackTags)
+
+            const locMap = new Map<string, { count: number, latestPost: any }>();
             for (const p of arr) {
               const loc = p.location as any;
               if (loc && loc.level === 2 && loc.deleted !== 1 && !loc.isHidden) {
                 const locId = loc.id || loc.name;
-                if (locId && !seen.has(locId)) {
-                  seen.add(locId);
-                  unique.push(p);
+                if (!locMap.has(locId)) {
+                  locMap.set(locId, { count: 1, latestPost: p });
+                } else {
+                  locMap.get(locId)!.count++;
                 }
               }
-              if (unique.length >= 10) break;
             }
-            setRecentPosts(unique);
+            const topLocations = Array.from(locMap.values())
+              .sort((a, b) => b.count - a.count)
+              .slice(0, 5)
+              .map(item => ({
+                ...item.latestPost,
+                dynamicCheckInCount: item.count
+              }));
+            setRecentPosts(topLocations);
           }
         }
       } catch (_) {
@@ -122,11 +151,8 @@ export function RightSidebar() {
           <div className="mb-4 flex items-center justify-between">
             <h3 className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
               <Camera className="h-3.5 w-3.5 text-primary" />
-              Nhiếp ảnh gia gợi ý
+              Nhiếp ảnh gia đáng theo dõi
             </h3>
-            <Link href="/explore?tab=photographers" className="text-xs font-semibold text-primary hover:underline">
-              Xem tất cả
-            </Link>
           </div>
 
           {loading ? (
@@ -136,9 +162,9 @@ export function RightSidebar() {
           ) : suggestedUsers.length > 0 ? (
             <div className="space-y-3">
               {suggestedUsers.map((user) => (
-                <div key={user.id} className="flex items-center gap-3 rounded-xl px-2 py-1.5 hover:bg-muted transition-colors">
+                <div key={user.id} className="flex items-center gap-3 rounded-xl px-2 py-1.5 hover:bg-muted transition-colors -mx-2 group">
                   <Link href={`/profile/${user.id}`}>
-                    <Avatar className="h-9 w-9">
+                    <Avatar className="h-10 w-10 border border-border/50">
                       <AvatarImage src={user.avatarUrl || "/default-avatar.svg"} alt={user.username} />
                       <AvatarFallback className="text-sm font-bold">
                         {user.username?.charAt(0)?.toUpperCase()}
@@ -148,15 +174,15 @@ export function RightSidebar() {
                   <div className="flex-1 overflow-hidden">
                     <Link
                       href={`/profile/${user.id}`}
-                      className="block truncate text-sm font-semibold text-foreground hover:text-primary transition-colors"
+                      className="block truncate text-sm font-bold text-foreground group-hover:text-primary transition-colors"
                     >
                       {user.username}
                     </Link>
-                    <p className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">
-                      {user.level || "Explorer"}
+                    <p className="text-[11px] text-muted-foreground font-medium">
+                      {user.followersCount || 0} followers
                     </p>
                   </div>
-                  <Button variant="outline" size="sm" className="h-7 px-3 text-[11px] font-bold shrink-0">
+                  <Button className="h-7 px-4 text-[11px] font-bold shrink-0 bg-primary text-white hover:bg-primary/90 rounded-full">
                     Follow
                   </Button>
                 </div>
@@ -174,17 +200,17 @@ export function RightSidebar() {
             Hashtag thịnh hành
           </h3>
           {tags.length > 0 ? (
-            <div className="space-y-1">
+            <div className="flex flex-wrap gap-2">
               {tags.map((tag) => (
                 <Link
                   key={tag.id}
                   href={`/explore?tag=${tag.name}`}
-                  className="flex items-center justify-between rounded-xl px-3 py-2.5 transition-colors hover:bg-muted group"
+                  className="flex items-center gap-1.5 rounded-full bg-muted/60 px-3 py-1.5 text-sm font-semibold text-foreground hover:bg-primary hover:text-primary-foreground transition-all border border-border/50 hover:border-primary shadow-sm group"
                 >
-                  <span className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">
-                    #{tag.name}
-                  </span>
-                  <TrendingUp className="h-3 w-3 text-muted-foreground/40 group-hover:text-primary transition-colors" />
+                  <span>#{tag.name}</span>
+                  {tag.count !== undefined && tag.count > 0 && (
+                    <span className="text-muted-foreground text-[11px] font-medium opacity-70 group-hover:text-primary-foreground/80">{tag.count}</span>
+                  )}
                 </Link>
               ))}
             </div>
@@ -193,51 +219,53 @@ export function RightSidebar() {
           )}
         </div>
 
-        {/* Recent Check-ins — từ bài viết thực */}
+        {/* Top 5 Locations */}
         <div>
           <h3 className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
             <MapPin className="h-3.5 w-3.5 text-primary" />
-            Check-in gần đây
+            Top 5 Địa Điểm Hot
           </h3>
           {recentPosts.length > 0 ? (
-            <div className="space-y-2">
+            <div className="space-y-3">
               {recentPosts.map((post) => {
                 const thumb = post.photos?.[0]?.imageUrl || post.images?.[0]
+                const locCount = post.dynamicCheckInCount || post.location?.postCount || post.location?.checkInCount || 0
                 return (
                   <Link
                     key={post.id}
-                    href={`/post/${post.id}`}
-                    className="flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-muted group"
+                    href={`/location/${post.location?.id || ''}`}
+                    className="flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-muted group -mx-2"
                   >
-                    <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-muted">
+                    <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-muted shadow-sm">
                       {thumb ? (
                         <Image
                           src={thumb}
                           alt={post.location?.name || "Check-in"}
                           fill
                           className="object-cover group-hover:scale-105 transition-transform"
-                          sizes="44px"
+                          sizes="56px"
                         />
                       ) : (
                         <div className="flex h-full items-center justify-center">
-                          <MapPin className="h-4 w-4 text-muted-foreground/30" />
+                          <MapPin className="h-5 w-5 text-muted-foreground/30" />
                         </div>
                       )}
                     </div>
-                    <div className="flex-1 overflow-hidden">
-                      <p className="truncate text-xs font-bold text-foreground group-hover:text-primary transition-colors">
-                        {post.author?.username || "Ẩn danh"}
-                      </p>
-                      <p className="truncate text-[10px] text-muted-foreground">
+                    <div className="flex-1 overflow-hidden flex flex-col justify-center gap-0.5">
+                      <p className="truncate text-sm font-bold text-foreground group-hover:text-primary transition-colors">
                         {post.location?.name || "Địa điểm không xác định"}
                       </p>
+                      <p className="truncate text-[11px] text-muted-foreground font-medium">
+                        {post.location?.province || "Việt Nam"} • {locCount} lượt check-in
+                      </p>
+
                     </div>
                   </Link>
                 )
               })}
             </div>
           ) : (
-            <p className="text-xs text-muted-foreground text-center py-4">Chưa có check-in nào</p>
+            <p className="text-xs text-muted-foreground text-center py-4">Chưa có dữ liệu</p>
           )}
         </div>
 

@@ -40,7 +40,7 @@ export function LocationMapPickerModal({ open, onOpenChange, availableLocations,
   const [suggestedLocation, setSuggestedLocation] = useState<LocationItem | null>(null)
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
-  const [searchResults, setSearchResults] = useState<{display: string, lat: number, lng: number, ref_id?: string}[]>([])
+  const [searchResults, setSearchResults] = useState<{display: string, name?: string, address?: string, lat: number, lng: number, ref_id?: string}[]>([])
   const [isSearching, setIsSearching] = useState(false)
   const searchDebounce = useRef<NodeJS.Timeout | null>(null)
 
@@ -55,6 +55,8 @@ export function LocationMapPickerModal({ open, onOpenChange, availableLocations,
         const data = await searchVietMap(q)
         setSearchResults((data || []).map((item: any) => ({
           display: item.display_name || item.name || item.display,
+          name: item.name || item.display_name?.split(",")[0],
+          address: item.address || item.display_name,
           lat: item.lat ?? 0, lng: item.lon ?? item.lng ?? 0,
           ref_id: item.ref_id
         })))
@@ -63,7 +65,7 @@ export function LocationMapPickerModal({ open, onOpenChange, availableLocations,
     }, 380)
   }
 
-  const handleSelectResult = async (r: {display: string, lat: number, lng: number, ref_id?: string}) => {
+  const handleSelectResult = async (r: {display: string, name?: string, address?: string, lat: number, lng: number, ref_id?: string}) => {
     setSearchQuery(r.display); setSearchResults([])
     setIsSearching(true)
     let finalLat = r.lat, finalLng = r.lng
@@ -243,7 +245,12 @@ export function LocationMapPickerModal({ open, onOpenChange, availableLocations,
                     {isSearching ? <div className="px-4 py-3 text-sm text-muted-foreground">Đang tìm...</div> : searchResults.map((r, i) => (
                       <button key={i} type="button" onClick={() => handleSelectResult(r)} className="w-full flex items-start gap-3 px-4 py-3 text-left text-sm hover:bg-muted/80 border-b border-border/50 last:border-0 transition-colors">
                         <MapPin className="h-4 w-4 mt-0.5 text-primary shrink-0" />
-                        <span className="line-clamp-2">{r.display}</span>
+                        <div className="flex flex-col overflow-hidden">
+                          <span className="font-medium text-foreground truncate">{r.name || r.display}</span>
+                          {r.address && r.address !== (r.name || r.display) && (
+                            <span className="text-[11px] text-muted-foreground line-clamp-1 mt-0.5 leading-tight">{r.address}</span>
+                          )}
+                        </div>
                       </button>
                     ))}
                   </div>

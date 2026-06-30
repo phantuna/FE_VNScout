@@ -7,7 +7,6 @@ export default function AuthLayout({
 }) {
   return (
     <div className="flex min-h-screen">
-      {/* Left side: Image/Branding */}
       <div className="hidden w-1/2 bg-muted lg:block relative">
         <Image
           src="https://images.unsplash.com/photo-1511895426328-dc8714191300?q=80&w=2070&auto=format&fit=crop"
@@ -24,8 +23,6 @@ export default function AuthLayout({
           </p>
         </div>
       </div>
-
-      {/* Right side: Form */}
       <div className="flex w-full items-center justify-center lg:w-1/2 p-8">
         {children}
       </div>
